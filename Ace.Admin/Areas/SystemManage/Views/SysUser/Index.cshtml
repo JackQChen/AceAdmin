@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+<script type="text/javascript">
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+    $(function () {
+        var gridOpt = getGridOption(
+            grid_selector, pager_selector, {
+                url: "@Url.Action("GetPageData")",
+                colModel: [
+                    { label: 'ID', name: 'UserID', width: 60, sorttype: "int", key: true },
+                    { label: '所属部门', name: 'UnitName', width: 90 },
+                    { label: '姓名', name: 'UserName', width: 90 },
+                    { label: '工号', name: 'Code', width: 90 },
+                    { label: '性别', name: 'Sex', width: 90 },
+                    { label: '状态', name: 'State', width: 90 },
+                    { label: '备注', name: 'Remark', width: 90 }
+                ],
+                sortname: 'UserID',
+            });
+        $(grid_selector).jqGrid(gridOpt);
+    });
+    function Add() {
+        modalOpen({
+            title: "用户管理 - 新增",
+            url: "SystemManage/SysUser/Form",
+            callback: function () {
+                modalContent().submitForm(function () {
+                    Refresh();
+                });
+            }
+        });
+    }
+    function Edit() {
+        var sid = $(grid_selector).jqGrid('getGridParam', 'selrow');
+        if (sid == null) { alert("没有任何选中行！"); return; }
+        modalOpen({
+            title: "用户管理 - 编辑",
+            url: "@Url.Action("Form")" + "?id=" + sid,
+            callback: function () {
+                modalContent().submitForm(function () {
+                    Refresh();
+                });
+            }
+        });
+    }
+    function Delete() {
+        var sid = $(grid_selector).jqGrid('getGridParam', 'selrow');
+        if (sid == null) { alert("没有任何选中行！"); return; }
+        modalConfirm({
+            text: "确定删除该记录吗？",
+            callback: function () {
+                deleteForm({
+                    url: "SystemManage/SysUser/DeleteForm?id=" + sid,
+                    complete: function () {
+                        modalConfirmClose();
+                        Refresh();
+                    }
+                });
+            }
+        });
+    }
+    function View() {
+        var sid = $(grid_selector).jqGrid('getGridParam', 'selrow');
+        if (sid == null) { alert("没有任何选中行！"); return; }
+        modalOpen({
+            title: "用户管理 - 查看",
+            url: "SystemManage/SysUser/Form?id=" + sid,
+            view: true
+        });
+    }
+    function Refresh() {
+        $(grid_selector).setGridParam({
+            postData: {
+                search: $('#txtSearch').val()
+            },
+        }).trigger('reloadGrid');
+    }
+</script>
+<div>
+    <div class="btn-group">
+        <button class="btn btn-sm btn-primary" onclick="Add()">
+            <i class="ace-icon fa fa-plus-circle bigger-110"></i>新增
+        </button>
+        <button class="btn btn-sm btn-success" onclick="Edit()">
+            <i class="ace-icon fa fa-pencil bigger-110"></i>编辑
+        </button>
+        <button class="btn btn-sm btn-danger" onclick="Delete()">
+            <i class="ace-icon fa fa-minus-circle bigger-110"></i>删除
+        </button>
+        <button class="btn btn-sm btn-yellow" onclick="View()">
+            <i class="ace-icon fa fa-search-plus bigger-110"></i>查看
+        </button>
+        <input type="text" class="search" id="txtSearch" placeholder="姓名、工号、所属部门" />
+        <script>
+            $('#txtSearch')[0].onkeydown = function (e) {
+                if (e.keyCode == 13) {
+                    Refresh();
+                }
+            }
+        </script>
+        <button class="btn btn-sm btn-info" onclick="Refresh()">
+            <i class="ace-icon fa fa-refresh bigger-110"></i>刷新
+        </button>
+    </div>
+    <table id="grid-table"></table>
+    <div id="grid-pager">
+    </div>
+</div>

@@ -1,0 +1,117 @@
+﻿@using Ace.Dto;
+@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_LayoutForm.cshtml";
+}
+
+<script>
+    $(function () {
+        $("#avatarSelect").change(function () {
+            var obj = $("#avatarSelect")[0].files[0];
+            var fr = new FileReader();
+            fr.onload = function () {
+                $("#avatarPreview").attr('src', this.result);
+                $("form [name=avatar]").val(this.result);
+            };
+            fr.readAsDataURL(obj);
+        });
+    });
+    function submitData() {
+        return {
+            url: "@Url.Action("Form")",
+            success: function (data) {
+                if (data.code != 200) {
+                    alert(data.msg);
+                    this.close = false;
+                }
+            }
+        };
+    }
+</script>
+<div class="page-content">
+    <div class="row">
+        <div class="col-xs-12">
+            <form class="form-horizontal" role="form" style="margin-top: 30px">
+                <input type="hidden" name="UserID" value="@Model.UserID" />
+                <input type="hidden" name="LoginName" value="@Model.LoginName" />
+                <input type="hidden" name="Password" value="@Model.Password" />
+                <div class="form-group" style="margin-bottom: 0px">
+                    <div class="col-sm-9 col-xs-9">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">ID</label>
+                            <div class="col-sm-8">
+                                <input id="txtId" readonly type="text" class="col-sm-10 col-xs-11" />
+                                <script>
+                                    var id = $("form input[name='Id']").val();
+                                    if (id == 0)
+                                        $("#txtId").val("新增");
+                                    else
+                                        $("#txtId").val(id);
+                                </script>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">用户姓名</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="Name" value="@Model.UserName" autocomplete="off" class="col-sm-10 col-xs-11" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">工号</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="Code" value="@Model.Code" autocomplete="off" class="col-sm-10 col-xs-11" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-xs-3" style="margin-left: -10%;">
+                        <div>
+                            <input id="avatarSelect" type="file" style="display: none">
+                            <input name="avatar" type="hidden" value="@ViewBag.avatar" />
+                            <img id="avatarPreview" src=@ViewBag.avatar style="width: 90px; height: 90px; border: 1px solid #d5d5d5;" />
+                        </div>
+                        <div class="btn-group" style="margin-right:-5px;">
+                            <button class="btn btn-sm btn-primary" onclick="$('#avatarSelect').click();return false;">
+                                <i class="fa fa-plus-circle bigger-110"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="$('#avatarPreview').attr('src','');$('form [name=avatar]').val('');return false;">
+                                <i class="fa fa-minus-circle bigger-110"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">性别</label>
+                    <div class="col-sm-9">
+                        <div class="col-sm-10 col-xs-12" style="padding:0">
+                            <select name="Sex" class="form-control">
+                                <option value="M">男</option>
+                                <option value="F">女</option>
+                            </select>
+                            <script>$("form [name=Sex]").selectmenu();</script>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">备注</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="Remark" value="@Model.Remark" autocomplete="off" class="col-sm-10 col-xs-12" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">角色</label>
+                    <div class="col-sm-9">
+                        <select name="RoleList" class="multiselect" multiple="multiple">
+                            @{
+                                foreach (RoleDto role in ViewBag.roleList)
+                                {
+                                    <option value="@role.RoleId" selected>@role.RoleName</option>
+                                }
+                            }
+                        </select>
+                        <script>initMultiSelect();</script>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

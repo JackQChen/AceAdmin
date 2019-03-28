@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- basic styles -->
+    <link rel="stylesheet" href="@Url.Content("~/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/font-awesome/4.2.0/css/font-awesome.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/bootstrap-multiselect.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/jquery-ui.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/ui.jqgrid.min.css")" />
+    <!-- ace styles -->
+    <link rel="stylesheet" href="@Url.Content("~/css/ace.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/ace-rtl.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/ace-skins.min.css")" />
+    <!--[if !IE]> -->
+    <script src="@Url.Content("~/js/jquery-2.1.1.min.js")"></script>
+    <!-- <![endif]-->
+    <!--[if IE]>
+    <script src="@Url.Content("~/js/jquery-1.11.1.min.js")"></script>
+    <![endif]-->
+    <script type="text/javascript">
+        if ('ontouchstart' in document.documentElement) document.write("<script src='@Url.Content("~/js/jquery.mobile.custom.min.js")'>" + "<" + "/script>");
+    </script>
+    <script src="@Url.Content("~/js/jquery-ui.min.js")"></script>
+    <script src="@Url.Content("~/js/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/js/bootstrap-multiselect.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.jqGrid.min.js")"></script>
+    <script src="@Url.Content("~/js/i18n/grid.locale-cn.js")"></script>
+    <script src="@Url.Content("~/js/search.js")"></script>
+
+    <script src="@Url.Content("~/js/share/form.js")"></script>
+</head>
+<body style="background:white">
+    <div class="main-container">
+        <div id="divLoading" style="display: none; position: fixed; width: 100%; height: 100%;
+        background: rgba(255, 255, 255, 0.7); z-index: 999;">
+        </div>
+        @RenderBody()
+    </div>
+    @Html.AntiForgeryToken()
+</body>
+</html>
