@@ -102,8 +102,7 @@ namespace Ace.Boss.Controllers
         public IActionResult Logout()
         {
             var cookieKey = _projectSetting.Value.CookieKey;
-            string cookieValue = null;
-            Request.Cookies.TryGetValue(cookieKey, out cookieValue);
+            Request.Cookies.TryGetValue(cookieKey, out string cookieValue);
             //清除用户缓存信息
             string userCacheKey = "user_" + cookieValue;
             _cacheManager.Remove(userCacheKey);

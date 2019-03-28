@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="ZKWeb.System.Drawing" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,9 +44,6 @@
     </Reference>
     <Reference Include="Ace.Framework">
       <HintPath>..\Lib\Ace.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.UnitOfWork">
-      <HintPath>..\Lib\Ace.UnitOfWork.dll</HintPath>
     </Reference>
     <Reference Include="Ace.Utility">
       <HintPath>..\Lib\Ace.Utility.dll</HintPath>
