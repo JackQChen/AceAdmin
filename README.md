@@ -5,6 +5,7 @@
 支持部署至Windows、Linux、Mac OS，验证了在Win7SP1及树莓派(3B+)上均可成功运行<br><br>
 示例地址<br>http://cysoft.uicp.net:8081/<br><br>
 PC<br>
+![](https://github.com/chen365409389/ACEAdmin/blob/master/Img/PCHome.png)<br>
 ![](https://github.com/chen365409389/ACEAdmin/blob/master/Img/PCIndex.png)<br>
 ![](https://github.com/chen365409389/ACEAdmin/blob/master/Img/PCForm.png)<br>
 Phone<br>
