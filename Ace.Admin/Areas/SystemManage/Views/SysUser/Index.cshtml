@@ -2,21 +2,94 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_LayoutIndex.cshtml";
 }
+<link rel="stylesheet" href="@Url.Content("~/css/zTree.css")" />
+<style>
+    .ztree li span.button.ico_docu::before {
+        content: "\f054";
+    }
+
+    .ztree li span.button.ico_docu {
+        font-family: 'FontAwesome';
+        font-size: 14px;
+        background-image: none;
+        padding: 12px 0 0 5px;
+        color: #438eb9;
+    }
+
+    .ztree li span.button.ico_close::before {
+        content: "\f054";
+    }
+
+    .ztree li span.button.ico_close {
+        font-family: 'FontAwesome';
+        font-size: 14px;
+        background-image: none;
+        padding: 12px 0 0 5px;
+        color: #438eb9;
+    }
+
+    .ztree li span.button.ico_open::before {
+        content: "\f078";
+    }
+
+    .ztree li span.button.ico_open {
+        font-family: 'FontAwesome';
+        font-size: 14px;
+        background-image: none;
+        padding: 10px 0 0 2px;
+        color: #438eb9;
+    }
+</style>
+<script src="@Url.Content("~/js/jquery.ztree.core.min.js")"></script>
 <script type="text/javascript">
-    var grid_selector = "#grid-table";
-    var pager_selector = "#grid-pager";
+    var grid_selector = "#gridMain";
+    var pager_selector = "#pagerMain";
+    var deptId = "0", deptName = "";
     $(function () {
+        $('#container').height(document.documentElement.clientHeight);
+        $('#container').layout({
+            west__size: "25%"
+        });
+        var setting = {
+            data: {
+                key: {
+                    name: 'DeptName'
+                },
+                simpleData: {
+                    enable: true,
+                    idKey: 'DeptID',
+                    pIdKey: 'ParentID',
+                    rootPId: '-1'
+                }
+            },
+            callback: {
+                onClick: function (e, tId, node) {
+                    if (node.DeptID == deptId)
+                        return;
+                    deptId = node.DeptID;
+                    deptName = node.DeptName;
+                    Refresh();
+                }
+            }
+        };
+        $.fn.zTree.init($("#treeDept"), setting, @Html.Raw(ViewBag.deptList));
+        var zTree = $.fn.zTree.getZTreeObj("treeDept");
+        zTree.expandNode(zTree.getNodes()[0], true);
         var gridOpt = getGridOption(
             grid_selector, pager_selector, {
-                url: "@Url.Action("GetPageData")",
+                url: "@Url.Action("GetPageList")",
+                postData: {
+                    deptId : 0
+                },
                 colModel: [
-                    { label: 'ID', name: 'UserID', width: 60, sorttype: "int", key: true },
-                    { label: '所属部门', name: 'UnitName', width: 90 },
-                    { label: '姓名', name: 'UserName', width: 90 },
-                    { label: '工号', name: 'Code', width: 90 },
-                    { label: '性别', name: 'Sex', width: 90 },
-                    { label: '状态', name: 'State', width: 90 },
-                    { label: '备注', name: 'Remark', width: 90 }
+                    { label: 'ID', name: 'UserID', width: 50, sorttype: "int", key: true },
+                    { label: '姓名', name: 'UserName', width: 70 },
+                    { label: '所属部门', name: 'DeptName', width: 90 },
+                    { label: '登录账号', name: 'LoginName', width: 80 },
+                    { label: '工号', name: 'Code', width: 80 },
+                    { label: '性别', name: 'Sex', width: 80 },
+                    { label: '状态', name: 'State', width: 80 },
+                    { label: '备注', name: 'Remark', width: 80 }
                 ],
                 sortname: 'UserID',
             });
@@ -25,7 +98,9 @@
     function Add() {
         modalOpen({
             title: "用户管理 - 新增",
-            url: "SystemManage/SysUser/Form",
+            url: "@Url.Action("Form")"
+                + "?DeptID=" + deptId
+                + "&DeptName=" + deptName,
             callback: function () {
                 modalContent().submitForm(function () {
                     Refresh();
@@ -53,7 +128,7 @@
             text: "确定删除该记录吗？",
             callback: function () {
                 deleteForm({
-                    url: "SystemManage/SysUser/DeleteForm?id=" + sid,
+                    url: "@Url.Action("Delete")" + "?id=" + sid,
                     complete: function () {
                         modalConfirmClose();
                         Refresh();
@@ -67,45 +142,51 @@
         if (sid == null) { alert("没有任何选中行！"); return; }
         modalOpen({
             title: "用户管理 - 查看",
-            url: "SystemManage/SysUser/Form?id=" + sid,
+            url: "@Url.Action("Form")" + "?id=" + sid,
             view: true
         });
     }
     function Refresh() {
         $(grid_selector).setGridParam({
             postData: {
+                deptId: deptId,
                 search: $('#txtSearch').val()
             },
         }).trigger('reloadGrid');
     }
 </script>
-<div>
-    <div class="btn-group">
-        <button class="btn btn-sm btn-primary" onclick="Add()">
-            <i class="ace-icon fa fa-plus-circle bigger-110"></i>新增
-        </button>
-        <button class="btn btn-sm btn-success" onclick="Edit()">
-            <i class="ace-icon fa fa-pencil bigger-110"></i>编辑
-        </button>
-        <button class="btn btn-sm btn-danger" onclick="Delete()">
-            <i class="ace-icon fa fa-minus-circle bigger-110"></i>删除
-        </button>
-        <button class="btn btn-sm btn-yellow" onclick="View()">
-            <i class="ace-icon fa fa-search-plus bigger-110"></i>查看
-        </button>
-        <input type="text" class="search" id="txtSearch" placeholder="姓名、工号、所属部门" />
-        <script>
-            $('#txtSearch')[0].onkeydown = function (e) {
-                if (e.keyCode == 13) {
-                    Refresh();
-                }
-            }
-        </script>
-        <button class="btn btn-sm btn-info" onclick="Refresh()">
-            <i class="ace-icon fa fa-refresh bigger-110"></i>刷新
-        </button>
+<div id="container">
+    <div class="ui-layout-west">
+        <ul id="treeDept" class="ztree"></ul>
     </div>
-    <table id="grid-table"></table>
-    <div id="grid-pager">
+    <div class="ui-layout-center">
+        <div class="btn-group">
+            <button class="btn btn-sm btn-primary" onclick="Add()">
+                <i class="ace-icon fa fa-plus-circle bigger-110"></i>新增
+            </button>
+            <button class="btn btn-sm btn-success" onclick="Edit()">
+                <i class="ace-icon fa fa-pencil bigger-110"></i>编辑
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="Delete()">
+                <i class="ace-icon fa fa-minus-circle bigger-110"></i>删除
+            </button>
+            <button class="btn btn-sm btn-yellow" onclick="View()">
+                <i class="ace-icon fa fa-search-plus bigger-110"></i>查看
+            </button>
+            <input type="text" class="search" id="txtSearch" placeholder="ID、姓名、账号、工号" />
+            <script>
+                $('#txtSearch')[0].onkeydown = function (e) {
+                    if (e.keyCode == 13) {
+                        Refresh();
+                    }
+                }
+            </script>
+            <button class="btn btn-sm btn-info" onclick="Refresh()">
+                <i class="ace-icon fa fa-refresh bigger-110"></i>刷新
+            </button>
+        </div>
+        <table id="gridMain"></table>
+        <div id="pagerMain">
+        </div>
     </div>
 </div>

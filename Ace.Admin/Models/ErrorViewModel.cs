@@ -1,6 +1,6 @@
 using System;
 
-namespace Ace.Boss.Models
+namespace Ace.Admin.Models
 {
     public class ErrorViewModel
     {

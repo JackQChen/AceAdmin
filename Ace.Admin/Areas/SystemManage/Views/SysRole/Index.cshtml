@@ -1,0 +1,203 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+<script type="text/javascript">
+    var grid_selector = "#gridMain";
+    var pager_selector = "#pagerMain";
+    var grid_userselector = "#gridUser";
+    var pager_userselector = "#pagerUser";
+    $(function () {
+        $('#container').height(document.documentElement.clientHeight);
+        $('#container').layout({
+            east__size: "50%"
+        });
+        //load roleGrid
+        var gridOpt = getGridOption(
+            grid_selector, pager_selector, {
+                url: "@Url.Action("GetPageList")",
+                colModel: [
+                    { label: 'ID', name: 'RoleID', width: 50, sorttype: "int", key: true },
+                    { label: '角色名称', name: 'RoleName', width: 70 },
+                    { label: '描述', name: 'Description', width: 90 }
+                ],
+                sortname: 'RoleID',
+                onSelectRow: function () {
+                    RefreshUserList();
+                }
+            });
+        $(grid_selector).jqGrid(gridOpt);
+        //init userGrid
+        var gridUserOpt = getGridOption(
+            grid_userselector, pager_userselector, {
+                url: "@Url.Action("GetUserPageList")",
+                multiselect: true,
+                datatype: 'local',
+                colModel: [
+                    { label: '用户ID', name: 'UserID', width: 50, sorttype: "int", key: true },
+                    { label: '用户姓名', name: 'UserName', width: 70 },
+                    { label: '登录账号', name: 'LoginName', width: 90 },
+                    { label: '工号', name: 'Code', width: 70 },
+                    { label: '所属部门', name: 'DeptName', width: 70 }
+                ],
+                sortname: 'UserID'
+            });
+        $(grid_userselector).jqGrid(gridUserOpt);
+    });
+    function Add() {
+        modalOpen({
+            title: "角色管理 - 新增",
+            url: "@Url.Action("Form")",
+            callback: function () {
+                modalContent().submitForm(function () {
+                    Refresh();
+                });
+            }
+        });
+    }
+    function Edit() {
+        var sid = $(grid_selector).jqGrid('getGridParam', 'selrow');
+        if (sid == null) { alert("没有任何选中行！"); return; }
+        modalOpen({
+            title: "角色管理 - 编辑",
+            url: "@Url.Action("Form")" + "?id=" + sid,
+            callback: function () {
+                modalContent().submitForm(function () {
+                    Refresh();
+                });
+            }
+        });
+    }
+    function Delete() {
+        var sid = $(grid_selector).jqGrid('getGridParam', 'selrow');
+        if (sid == null) { alert("没有任何选中行！"); return; }
+        modalConfirm({
+            text: "确定删除该记录吗？",
+            callback: function () {
+                deleteForm({
+                    url: "@Url.Action("Delete")" + "?id=" + sid,
+                    complete: function () {
+                        modalConfirmClose();
+                        Refresh();
+                    }
+                });
+            }
+        });
+    }
+    function View() {
+        var sid = $(grid_selector).jqGrid('getGridParam', 'selrow');
+        if (sid == null) { alert("没有任何选中行！"); return; }
+        modalOpen({
+            title: "角色管理 - 查看",
+            url: "@Url.Action("Form")" + "?id=" + sid,
+            view: true
+        });
+    }
+    function Refresh() {
+        $(grid_selector).setGridParam({
+            postData: {
+                search: $('#txtSearch').val()
+            },
+        }).trigger('reloadGrid');
+    }
+    //userList
+    function AddUser() {
+        var sid = $(grid_selector).jqGrid('getGridParam', 'selrow');
+        if (sid == null) { alert("没有任何选中行！"); return; }
+        modalOpen({
+            title: "添加用户",
+            url: "@Url.Action("UserForm")" + "?roleId=" + sid,
+            callback: function () {
+                modalContent().submitForm(function () {
+                    RefreshUserList();
+                });
+            }
+        });
+    }
+    function RemoveUser() {
+        var sid = $(grid_selector).jqGrid('getGridParam', 'selrow');
+        if (sid == null) { alert("没有任何选中行！"); return; }
+        var ids = $(grid_userselector).jqGrid('getGridParam', 'selarrrow');
+        if (ids.length==0) { alert("没有任何选中行！"); return; }
+        modalConfirm({
+            text: "确定移除选中的用户吗？",
+            callback: function () {
+                deleteForm({
+                    url: "@Url.Action("DeleteRoleUser")",
+                    data: {
+                        roleId: sid,
+                        userIdList: ids,
+                        __RequestVerificationToken: $("input[name=__RequestVerificationToken]").val()
+                    },
+                    complete: function () {
+                        modalConfirmClose();
+                        RefreshUserList();
+                    }
+                });
+            }
+        });
+    }
+    function RefreshUserList() {
+        $(grid_userselector).setGridParam({
+            datatype: "json",
+            postData: {
+                roleId:  $(grid_selector).jqGrid('getGridParam', 'selrow'),
+                search: $('#txtUserSearch').val()
+            },
+        }).trigger('reloadGrid');
+    }
+</script>
+<div id="container">
+    <div class="ui-layout-center">
+        <div class="btn-group">
+            <button class="btn btn-sm btn-primary" onclick="Add()">
+                <i class="ace-icon fa fa-plus-circle bigger-110"></i>新增
+            </button>
+            <button class="btn btn-sm btn-success" onclick="Edit()">
+                <i class="ace-icon fa fa-pencil bigger-110"></i>编辑
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="Delete()">
+                <i class="ace-icon fa fa-minus-circle bigger-110"></i>删除
+            </button>
+            <button class="btn btn-sm btn-yellow" onclick="View()">
+                <i class="ace-icon fa fa-search-plus bigger-110"></i>查看
+            </button>
+            <input type="text" class="search" id="txtSearch" placeholder="角色ID、名称" />
+            <script>
+                $('#txtSearch')[0].onkeydown = function (e) {
+                    if (e.keyCode == 13) {
+                        Refresh();
+                    }
+                }
+            </script>
+            <button class="btn btn-sm btn-info" onclick="Refresh()">
+                <i class="ace-icon fa fa-refresh bigger-110"></i>刷新
+            </button>
+        </div>
+        <table id="gridMain"></table>
+        <div id="pagerMain"></div>
+    </div>
+    <div class="ui-layout-east">
+        <div class="btn-group">
+            <button class="btn btn-sm btn-primary" onclick="AddUser()">
+                <i class="ace-icon fa fa-plus-circle bigger-110"></i>添加用户
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="RemoveUser()">
+                <i class="ace-icon fa fa-minus-circle bigger-110"></i>移除用户
+            </button>
+            <input type="text" class="search" id="txtUserSearch" placeholder="用户ID、姓名、工号" />
+            <script>
+                $('#txtUserSearch')[0].onkeydown = function (e) {
+                    if (e.keyCode == 13) {
+                        RefreshUserList();
+                    }
+                }
+            </script>
+            <button class="btn btn-sm btn-info" onclick="RefreshUserList()">
+                <i class="ace-icon fa fa-refresh bigger-110"></i>刷新
+            </button>
+        </div>
+        <table id="gridUser"></table>
+        <div id="pagerUser"></div>
+    </div>
+</div>

@@ -4,7 +4,7 @@ using System.Linq;
 using Ace.Core.Page;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ace.Boss
+namespace Ace.Admin
 {
     /// <summary>
     /// jqGrid分页与标准分页转换
@@ -37,13 +37,9 @@ namespace Ace.Boss
                 records = pageResult.TotalRows,
                 rows = pageResult.DataList,
             };
+            //page=1 && total=0 jqGrid设置page=0
             if (pageData.page > pageData.total)
                 pageData.page = pageData.total;
-            if (pageData.total > 0)
-            {
-                if (pageData.page == 0)
-                    pageData.page = 1;
-            }
             return new JsonResult(pageData);
         }
     }

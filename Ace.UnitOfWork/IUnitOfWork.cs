@@ -9,12 +9,14 @@ namespace Ace.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
+        IRepository<Sys_Asset> SysAssetRep { get; }
+        IRepository<Sys_Info_Log> SysInfoLogRep { get; }
         IRepository<Sys_Error_Log> SysErrorLogRep { get; }
         IRepository<Sys_Menu> SysMenuRep { get; }
-        IRepository<Sys_Operation_Log> SysOperationLogRep { get; }
         IRepository<Sys_Role> SysRoleRep { get; }
         IRepository<Sys_Role_Menu> SysRoleMenuRep { get; }
         IRepository<Sys_Role_User> SysRoleUserRep { get; }
+        IRepository<Sys_Dept> SysDeptRep { get; }
         IRepository<Sys_User> SysUserRep { get; }
         IRepository<Sys_User_Menu> SysUserMenuRep { get; }
 

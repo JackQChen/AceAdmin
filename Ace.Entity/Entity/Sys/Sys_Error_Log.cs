@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Ace.Entity
 {
-    [Serializable]  
+    [Serializable]
     public class Sys_Error_Log : BaseEntity<int>
     {
-       
+
         public string URL { get; set; }
         public string Parameters { get; set; }
         public string ControllerName { get; set; }
@@ -21,7 +21,7 @@ namespace Ace.Entity
         public string SystemName { get; set; }
         public string ErrorSource { get; set; }
         public string ErrorStack { get; set; }
-        public int LoginID { get; set; }
+        public int UserID { get; set; }
         public string LoginName { get; set; }
         public string IPAddress { get; set; }
     }

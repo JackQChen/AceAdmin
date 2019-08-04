@@ -1,9 +1,10 @@
-﻿using Ace.Dto;
+﻿using System.Threading.Tasks;
+using Ace.Core.Page;
+using Ace.Dto;
 using Ace.Framework.Filter;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
-namespace Ace.Boss.Controllers
+namespace Ace.Admin.Controllers
 {
     public class LogController : BaseController
     {
@@ -15,15 +16,13 @@ namespace Ace.Boss.Controllers
         [NoLogAction]
         public IActionResult ReqeustLogManger()
         {
-            //int a = 0;
-            //a = 3 / a;
             return View();
         }
         [HttpGet]
         [NoLogAction]
         public async Task<IActionResult> ReqeustLogPagedList(int pageIndex = 1, string ControllerName = null, string ActionName = null)
         {
-            var list = await _logService.GetRequestLogPageListAsync(pageIndex, _projectSetting.Value.PageSize, ControllerName, ActionName);
+            var list = await _logService.GetInfoLogPageListAsync(new PageOption(pageIndex, _projectSetting.Value.PageSize), ControllerName, ActionName);
             return list.ToPageData();
         }
         [HttpGet]
@@ -36,7 +35,7 @@ namespace Ace.Boss.Controllers
         [NoLogAction]
         public async Task<IActionResult> ExceptionLogPagedList(int pageIndex = 1, string ControllerName = null, string ActionName = null)
         {
-            var list = await _logService.GetExceptionLogPageListAsync(pageIndex, _projectSetting.Value.PageSize, ControllerName, ActionName);
+            var list = await _logService.GetErrorLogPageListAsync(new PageOption(pageIndex, _projectSetting.Value.PageSize), ControllerName, ActionName);
             return list.ToPageData();
         }
 
@@ -45,12 +44,12 @@ namespace Ace.Boss.Controllers
         [PublicAction]
         [Produces("application/json")]
         //[Route("writeExceptionLog")]
-        public void WriteExceptionLog(ExceptionLogDto model)
+        public void WriteExceptionLog(ErrorLogDto model)
         {
             try
             {
                 if (model.SecretKey == _projectSetting.Value.SecretKey)
-                    _logService.WriteExceptionLog(model);
+                    _logService.WriteErrorLog(model);
             }
             catch
             {

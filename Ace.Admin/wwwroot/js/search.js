@@ -7,7 +7,7 @@ function initSearchControl(opt) {
     var divDataGrid = "<div id='" + opt.id + "_divDataGrid' style='position:fixed;z-index:999;background:white;border:1px solid darkgrey'> <table id='" + opt.id + "_dataGrid'></table></div>";
     txtSearch.parent().append(divDataGrid);
     if (opt.width == null)
-        opt.width = 400;
+        opt.width = txtSearch.width() + 8;
     if (opt.height == null)
         opt.height = 300;
     init_Grid(opt);
@@ -52,7 +52,7 @@ function init_Control(opt) {
         } else if (e.keyCode == 46) {
             txtBox.val("");
             txtBox.attr("displayText", "");
-            txtVal.val("");
+            txtVal.val(opt.nullValue);
         } else {
             isFuncKey = false;
             if (divDataGrid.css('display') == 'none')
@@ -112,7 +112,7 @@ function init_Grid(opt) {
         colModel: opt.colModel,
         width: opt.width,
         height: opt.height - 45,
-        ondblClickRow: function (id, irow, icol, e) {
+        ondblClickRow: function () {
             onSearchClose(opt, true);
         },
         loadComplete: function () {

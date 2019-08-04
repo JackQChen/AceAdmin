@@ -10,13 +10,14 @@ using System.Threading.Tasks;
 namespace Ace.Entity
 {
     [Serializable]
-   
-    public class Sys_Role_User : BaseEntity<int>
+
+    public class Sys_Role_User
     {
-       
+        [Key]
         [Display(Name = "角色ID")]
         public int RoleID { get; set; }
 
+        [Key]
         [Display(Name = "用户ID")]
         public int UserID { get; set; }
     }

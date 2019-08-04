@@ -1,0 +1,92 @@
+﻿<dl id="dt-list-1">
+    <dt>CPU温度</dt>
+    <dd>
+        <div class="progress progress-striped active">
+            <div style="width:@ViewBag.temp%" class="progress-bar progress-bar-success">
+                @Html.Raw(ViewBag.temp + "℃")
+            </div>
+        </div>
+    </dd>
+    <dd><div class="space-4"></div></dd>
+    <dt>CPU使用率</dt>
+    <dd>
+        <div class="progress progress-striped active">
+            <div style="width:@ViewBag.cpu%" class="progress-bar progress-bar-success">
+                @Html.Raw(ViewBag.cpu + "%")
+            </div>
+        </div>
+    </dd>
+    <dd><div class="space-4"></div></dd>
+    <dt>内存使用</dt>
+    <dd>
+        <div class="space-2"></div>
+        <div class="row">
+            <div class="col-xs-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="center">总容量</th>
+                            <th class="center">已使用</th>
+                            <th class="center">未使用</th>
+                            <th class="center">百分比</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div style="text-align: center;height: 50px;padding-top: 15px;">@ViewBag.ram1</div>
+                            </td>
+                            <td>
+                                <div style="text-align: center;height: 50px;padding-top: 15px;">@ViewBag.ram2</div>
+                            </td>
+                            <td>
+                                <div style="text-align: center;height: 50px;padding-top: 15px;">@ViewBag.ram3</div>
+                            </td>
+                            <td style="text-align:center">
+                                <div class="easy-pie-chart percentage" data-percent="@ViewBag.ram4" data-color="#87B87F">
+                                    <span class="percent">@ViewBag.ram4</span>%
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </dd>
+    <dt>磁盘使用</dt>
+    <dd>
+        <div class="space-2"></div>
+        <div class="row">
+            <div class="col-xs-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="center">总容量</th>
+                            <th class="center">已使用</th>
+                            <th class="center">未使用</th>
+                            <th class="center">百分比</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div style="text-align: center;height: 50px;padding-top: 15px;">@ViewBag.disk1</div>
+                            </td>
+                            <td>
+                                <div style="text-align: center;height: 50px;padding-top: 15px;">@ViewBag.disk2</div>
+                            </td>
+                            <td>
+                                <div style="text-align: center;height: 50px;padding-top: 15px;">@ViewBag.disk3</div>
+                            </td>
+                            <td style="text-align:center">
+                                <div class="easy-pie-chart percentage" data-percent="@ViewBag.disk4" data-color="#87B87F">
+                                    <span class="percent">@ViewBag.disk4</span>%
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </dd>
+</dl>

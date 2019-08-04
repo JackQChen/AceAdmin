@@ -4,12 +4,9 @@ using System.Data;
 using System.Threading.Tasks;
 using Ace.Core.Dapper;
 using Ace.Core.Data;
-using Ace.Core.Http;
 using Ace.Entity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Ace.UnitOfWork
 {
@@ -37,7 +34,7 @@ namespace Ace.UnitOfWork
             {
                 if (disposing)
                 {
-                    _dbContext.Dispose();//随着工作单元的销毁而销毁
+                    _dbContext.Dispose();//随工作单元销毁
                 }
             }
             this.disposed = true;
@@ -50,18 +47,17 @@ namespace Ace.UnitOfWork
         }
         public IDbContextTransaction BeginTransaction()
         {
-            var scope = _dbContext.Database.BeginTransaction();
-            return scope;
+            return _dbContext.Database.BeginTransaction();
         }
 
         public List<T> SqlQuery<T>(string sql, object param = null) where T : class
         {
-            var con = _dbContext.Database.GetDbConnection();
-            if (con.State != ConnectionState.Open)
+            var conn = _dbContext.Database.GetDbConnection();
+            if (conn.State != ConnectionState.Open)
             {
-                con.Open();
+                conn.Open();
             }
-            var list = DapperReader.SqlQuery<T>(con, sql, param);
+            var list = DapperReader.SqlQuery<T>(conn, sql, param);
             return list;
         }
 
@@ -71,15 +67,23 @@ namespace Ace.UnitOfWork
         }
 
         #region Sys Repository
+        private IRepository<Sys_Asset> _sysAssetRep;
+        public IRepository<Sys_Asset> SysAssetRep
+        {
+            get
+            {
+                if (_sysAssetRep == null)
+                    _sysAssetRep = new Repository<Sys_Asset>(_dbContext);
+                return _sysAssetRep;
+            }
+        }
         private IRepository<Sys_User> _sysUserRep;
         public IRepository<Sys_User> SysUserRep
         {
             get
             {
                 if (_sysUserRep == null)
-                {
                     _sysUserRep = new Repository<Sys_User>(_dbContext);
-                }
                 return _sysUserRep;
             }
         }
@@ -89,9 +93,7 @@ namespace Ace.UnitOfWork
             get
             {
                 if (_sysUserMenuRep == null)
-                {
                     _sysUserMenuRep = new Repository<Sys_User_Menu>(_dbContext);
-                }
                 return _sysUserMenuRep;
             }
         }
@@ -101,9 +103,7 @@ namespace Ace.UnitOfWork
             get
             {
                 if (_sysRoleRep == null)
-                {
                     _sysRoleRep = new Repository<Sys_Role>(_dbContext);
-                }
                 return _sysRoleRep;
             }
         }
@@ -113,9 +113,7 @@ namespace Ace.UnitOfWork
             get
             {
                 if (_sysRoleUserRep == null)
-                {
                     _sysRoleUserRep = new Repository<Sys_Role_User>(_dbContext);
-                }
                 return _sysRoleUserRep;
             }
         }
@@ -126,9 +124,7 @@ namespace Ace.UnitOfWork
             get
             {
                 if (_sysRoleMenuRep == null)
-                {
                     _sysRoleMenuRep = new Repository<Sys_Role_Menu>(_dbContext);
-                }
                 return _sysRoleMenuRep;
             }
         }
@@ -138,10 +134,19 @@ namespace Ace.UnitOfWork
             get
             {
                 if (_sysMenuRep == null)
-                {
                     _sysMenuRep = new Repository<Sys_Menu>(_dbContext);
-                }
                 return _sysMenuRep;
+            }
+        }
+
+        private IRepository<Sys_Info_Log> _sysInfoLogRep;
+        public IRepository<Sys_Info_Log> SysInfoLogRep
+        {
+            get
+            {
+                if (_sysInfoLogRep == null)
+                    _sysInfoLogRep = new Repository<Sys_Info_Log>(_dbContext);
+                return _sysInfoLogRep;
             }
         }
 
@@ -151,23 +156,18 @@ namespace Ace.UnitOfWork
             get
             {
                 if (_sysErrorLogRep == null)
-                {
                     _sysErrorLogRep = new Repository<Sys_Error_Log>(_dbContext);
-                }
                 return _sysErrorLogRep;
             }
         }
-
-        private IRepository<Sys_Operation_Log> _sysOperationLogRep;
-        public IRepository<Sys_Operation_Log> SysOperationLogRep
+        private IRepository<Sys_Dept> _sysDeptRep;
+        public IRepository<Sys_Dept> SysDeptRep
         {
             get
             {
-                if (_sysOperationLogRep == null)
-                {
-                    _sysOperationLogRep = new Repository<Sys_Operation_Log>(_dbContext);
-                }
-                return _sysOperationLogRep;
+                if (_sysDeptRep == null)
+                    _sysDeptRep = new Repository<Sys_Dept>(_dbContext);
+                return _sysDeptRep;
             }
         }
         #endregion

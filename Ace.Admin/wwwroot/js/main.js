@@ -1,13 +1,34 @@
 ﻿
-function showMask(pCtl) {
-    var loading = $('#content-Loading');
-    loading.offset(pCtl.offset()).width(pCtl.width()).height(pCtl.height());
-    loading.find('h4').css('margin-top', (pCtl.height() / 2 - 30) + "px");
-    loading.css('display', 'block');
+var maskHtml = "<div class='mask-bg' style='\
+position:absolute;\
+width:100%;\
+height:100%;\
+left:0px;\
+top:0px;\
+z-index:13;\
+display:flex;\
+align-items:center;\
+justify-content:center;\
+background:rgba(0,0,0,0.1);\
+'>\
+<h4 class='smaller lighter grey'>\
+<i class='ace-icon fa fa-spinner fa-spin orange bigger-125'></i>&nbsp;<span>正在加载...</span>\
+</h4>\
+</div>";
+function showMask(pCtl, maskText, rect) {
+    if (pCtl.find('.mask-bg').length > 0)
+        return;
+    pCtl.append(maskHtml);
+    if (!!window.ActiveXObject || "ActiveXObject" in window)
+        pCtl.find('.mask-bg').css({ "background-color": "rgba(0, 0, 0, 0.1)", "text-align": "center", "padding-top": "300px" });
+    if (rect != null)
+        pCtl.find('.mask-bg').offset(rect.offset).width(rect.width).height(rect.height);
+    if (maskText != null)
+        pCtl.find('.mask-bg span').text(maskText);
 }
 
-function removeMask() {
-    $('#content-Loading').offset({ left: 0, top: 0 }).css("display", "none");
+function removeMask(pCtl) {
+    pCtl.find('.mask-bg').remove();
 }
 
 $("#ace-settings-sidebar").click();
@@ -25,17 +46,18 @@ function openTab(opt) {
     var tabText = opt.text;
     //tab exist
     if (tabList.indexOf(tabId) > -1) {
-        $('#tabHeader li a').each(function (i, o) {
+        $('#tabHeader a').each(function (i, o) {
             if ('#' + tabId == $(o).attr('href')) {
                 $('#breadcrumbs')[0].scrollLeft = $(o).parent('li')[0].offsetLeft - 1;
                 o.click();
+                return false;
             }
         });
         return;
     }
     //add tab
     var th = $("<li><a data-toggle='tab' href=#" + tabId
-        + "><i class='green ace-icon fa fa-home bigger-120'/>" + tabText
+        + "><i class='ace-icon fa fa-bars'/>" + tabText
         + "<i class='ace-icon fa fa-close'/></a></li>");
     $('#tabHeader').append(th);
     $('#breadcrumbs')[0].scrollLeft = th[0].offsetLeft;
@@ -43,10 +65,10 @@ function openTab(opt) {
     tc.append(tb);
     var f = tb.find("iframe");
     f.on('load', function (e) {
-        removeMask(e.target);
+        removeMask($(e.target.parentElement));
     });
     f.height($(window).height() - tc.offset().top);
-    showMask(f);
+    showMask(tb, null, { height: f.height() });
     f.attr('src', '/' + tabUrl);
     th.find("a").click();
     tabList.push(tabId);
@@ -93,7 +115,6 @@ $('#tabHeader')[0].oncontextmenu = function (e) {
 $('#tabHeader,#tabMenu li').on('click', function () {
     $('#tabMenu').css('display', 'none');
 });
-$('.nav-list .link:eq(0)').click();
 //override dialog's title function to allow for HTML titles
 $.widget("ui.dialog", $.extend({},
     $.ui.dialog.prototype, {
@@ -123,7 +144,6 @@ function modalOpen(opt) {
         if (opt.height == null)
             opt.height = "650";
     }
-    frame.height(opt.height - 100);
     var dlgOpt = {
         modal: true,
         width: opt.width,

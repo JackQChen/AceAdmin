@@ -1,0 +1,51 @@
+﻿<link rel="stylesheet" href="@Url.Content("~/css/zTree.css")" />
+<style>
+    .ztree li span.button.ico_docu::before {
+        content: "\f007";
+    }
+
+    .ztree li span.button.ico_docu {
+        font-family: 'FontAwesome';
+        font-size: 16px;
+        background-image: none;
+        padding: 12px 0 0 5px;
+        color: #438eb9;
+    }
+</style>
+<script src="@Url.Content("~/js/jquery.ztree.core.min.js")"></script>
+<script src="@Url.Content("~/js/jquery.ztree.excheck.min.js")"></script>
+<ul id="treeMenu" class="ztree" style="border-top: solid #ccc 1px;"></ul>
+
+<script type="text/javascript">
+    var setting = {
+        view: {
+            dblClickExpand: false
+        },
+        check: {
+            enable: true
+        },
+        data: {
+            key: {
+                name: 'MenuName'
+            },
+            simpleData: {
+                enable: true,
+                idKey: 'MenuID',
+                pIdKey: 'ParentID',
+                rootPId: '0'
+            }
+        },
+        callback: {
+            onClick: function (e, treeId, treeNode) {
+                var zTree = $.fn.zTree.getZTreeObj("treeMenu");
+                if (treeNode.check_Child_State == -1)
+                    zTree.checkNode(treeNode, !treeNode.checked, true);
+                else
+                    zTree.expandNode(treeNode);
+            }
+        }
+    };
+    $.fn.zTree.init($("#treeMenu"), setting, @Html.Raw(ViewBag.menuList));
+    var zTree = $.fn.zTree.getZTreeObj("treeMenu");
+    zTree.expandAll(true);
+</script>

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="@Url.Content("~/font-awesome/4.2.0/css/font-awesome.min.css")" />
     <!-- page specific plugin styles -->
     <link rel="stylesheet" href="@Url.Content("~/css/jquery-ui.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/jquery.layout.min.css")" />
     <link rel="stylesheet" href="@Url.Content("~/css/ui.jqgrid.min.css")" />
     <!-- text fonts -->
     <link rel="stylesheet" href="@Url.Content("~/css/fonts.googleapis.com.css")" />
@@ -40,11 +41,13 @@
         if ('ontouchstart' in document.documentElement) document.write("<script src='@Url.Content("~/js/jquery.mobile.custom.min.js")'><" + "/script>");
     </script>
     <!-- page specific plugin scripts -->
+    <script src="@Url.Content("~/js/jquery-ui.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.layout.min.js")"></script>
     <script src="@Url.Content("~/js/jquery.jqGrid.min.js")"></script>
     <script src="@Url.Content("~/js/i18n/grid.locale-cn.js")"></script>
     <script src="@Url.Content("~/js/share/index.js")"></script>
 </head>
-<body>
+<body style="background:white">
     <div class="main-container">
         @RenderBody()
     </div>

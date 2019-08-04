@@ -1,0 +1,82 @@
+﻿@using Ace.Dto;
+@model RoleDto;
+@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_LayoutForm.cshtml";
+}
+<style>
+    .search {
+        float: left;
+        margin: 0 1px 0 0;
+        height: 29px;
+    }
+</style>
+<script src="@Url.Content("~/js/share/index.js")"></script>
+<script>
+    var grid_userselector = "#gridUser";
+    var pager_userselector = "#pagerUser";
+    var roleId = @ViewBag.roleId;
+    $(function () {
+    //userGrid
+    var gridUserOpt = getGridOption(
+        grid_userselector, pager_userselector, {
+            url: "@Url.Action("GetUserPageList")",
+            multiselect: true,
+            postData: {
+                roleId: roleId,
+                except: true
+            },
+            colModel: [
+                { label: '用户ID', name: 'UserID', width: 50, sorttype: "int", key: true },
+                { label: '用户姓名', name: 'UserName', width: 70 },
+                { label: '登录账号', name: 'LoginName', width: 90 },
+                { label: '工号', name: 'Code', width: 70 },
+                { label: '所属部门', name: 'DeptName', width: 70 }
+            ],
+            sortname: 'UserID'
+            });
+        $(grid_userselector).jqGrid(gridUserOpt);
+    });
+    function RefreshUserList() {
+        $(grid_userselector).setGridParam({
+            postData: {
+                roleId: roleId,
+                except: true,
+                search: $('#txtUserSearch').val()
+            },
+        }).trigger('reloadGrid');
+    }
+    function submitData() {
+        return {
+            url: "@Url.Action("UserForm")",
+            data: {
+                roleId: roleId,
+                userIdList: $(grid_userselector).jqGrid('getGridParam', 'selarrrow'),
+                __RequestVerificationToken: $("input[name=__RequestVerificationToken]").val()
+            },
+            success: function (data) {
+                if (data.code != 200) {
+                    alert(data.msg);
+                    this.close = false;
+                }
+            }
+        };
+    }
+</script>
+<div>
+    <div class="btn-group">
+        <input type="text" class="search" id="txtUserSearch" placeholder="用户ID、姓名、工号" />
+        <script>
+            $('#txtUserSearch')[0].onkeydown = function (e) {
+                if (e.keyCode == 13) {
+                    RefreshUserList();
+                }
+            }
+        </script>
+        <button class="btn btn-sm btn-info" onclick="RefreshUserList()">
+            <i class="ace-icon fa fa-refresh bigger-110"></i>刷新
+        </button>
+    </div>
+    <table id="gridUser"></table>
+    <div id="pagerUser"></div>
+</div>

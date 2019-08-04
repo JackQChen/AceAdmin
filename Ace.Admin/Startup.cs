@@ -1,6 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using Ace.Boss.Models;
+﻿using System.Threading.Tasks;
+using Ace.Admin.Models;
 using Ace.Core.Cache;
 using Ace.Core.Http;
 using Ace.Core.Service;
@@ -16,7 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 
-namespace Ace.Boss
+namespace Ace.Admin
 {
     public class Startup
     {
@@ -36,7 +35,7 @@ namespace Ace.Boss
             //services.AddDbContext<EfDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             //Migration
-            //services.AddDbContext<EfDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Ace.Boss")));
+            //services.AddDbContext<EfDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Ace.Admin")));
             services.AddDbContext<EfDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
 
             //使用UnitOfWork代替Repository，在UnitOfWork中直接new Repository，不在这里依赖注入了
@@ -51,8 +50,7 @@ namespace Ace.Boss
             services.AddSession();
             services.AddHttpContextAccessor();
 
-            LogServiceHelper.Intance.Start(HostingEnvironment.WebRootPath + "/log/", 1024 * 64);
-            LogServiceHelper.Intance.Write(new LogModel() { CreatedTime = DateTime.Now, Dir = "application", Msg = "系统重启", Operator = "" });
+            LogService.Info("系统重启");
             services.Configure<ProjectSetting>(Configuration.GetSection("ProjectSetting"));
             services.AddMemoryCache();//启用内存缓存
             services.AddMvc(options =>
@@ -79,9 +77,7 @@ namespace Ace.Boss
                 // app.UseExceptionHandler("/Home/Error");
                 app.UseExceptionHandler(builder => builder.Run(async context => await ErrorEvent(context)));
             }
-
             app.UseStaticFiles();
-
             app.UseSession();
             app.UseMvc(routes =>
             {
@@ -89,8 +85,11 @@ namespace Ace.Boss
                     name: "area",
                     template: "{area:exists}/{controller}/{action=Index}/{id?}");
                 routes.MapRoute(
+                    name: "login",
+                    template: "{controller=Account}/{action=Login}");
+                routes.MapRoute(
                     name: "default",
-                    template: "{controller=Account}/{action=Login}/{id?}");
+                    template: "{controller}/{action=Index}/{id?}");
             });
         }
         public Task ErrorEvent(Microsoft.AspNetCore.Http.HttpContext context)
@@ -98,7 +97,7 @@ namespace Ace.Boss
             var feature = context.Features.Get<IExceptionHandlerFeature>();
             var error = feature?.Error;
             var path = ((ExceptionHandlerFeature)feature).Path;
-            LogServiceHelper.Intance.Write(new LogModel() { CreatedTime = DateTime.Now, Dir = "exception", Msg = path + "，错误信息:" + error.Message, Operator = "" });
+            LogService.Info(path + "，错误信息:" + error.Message);
             throw error;
         }
     }

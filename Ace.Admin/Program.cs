@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Ace.Boss
+namespace Ace.Admin
 {
     public class Program
     {

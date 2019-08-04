@@ -281,7 +281,6 @@
             $("#txtName").focus();
         });
         function login() {
-
             var name = $("#txtName").val();
             if (name == "") {
                 $("#txtTips").html("请输入用户名");
@@ -299,15 +298,15 @@
                     return false;
                 }
             }
-
             $("#btnLogin").attr("disabled", "disabled").text("正在登录…");
             $.post("/Account/Login", { name: name, password: password, validateCode: validateCode }, function (data) {
                 if (data.code == 200) {
                     $("#btnLogin").removeClass('width-35').text("登录成功跳转中…");
-                        window.location.href = "/Main/Index";
+                        window.location.href = "/Main";
                 } else {
                     $("#btnLogin").removeAttr("disabled").text("登录");
                     $("#txtTips").html(data.msg);
+                    $("#imgCode").click();
                 }
             });
         }

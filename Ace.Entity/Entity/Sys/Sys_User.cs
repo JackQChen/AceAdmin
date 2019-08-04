@@ -26,11 +26,11 @@ namespace Ace.Entity
         [MaxLength(32, ErrorMessage = "{0}最长{1}位")]
         public string Name { get; set; }
 
-        /// <summary>
-        /// 0:未设置，1：男，2：女
-        /// </summary>
+        [Required]
+        public int DeptID { get; set; }
+
         [Display(Name = "性别")]
-        public int? Sex { get; set; }
+        public string Sex { get; set; }
 
         [Display(Name = "出生日期")]
         public DateTime? Birth { get; set; }

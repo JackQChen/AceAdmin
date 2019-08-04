@@ -322,7 +322,7 @@
 
                     <li class="light-blue dropdown-modal">
                         <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                            <img class="nav-user-photo" src="@Url.Content("~/images/avatars/avatar4.png")" alt="Jason's Photo" />
+                            <img class="nav-user-photo" src="@Html.Raw( ViewBag.avatar == null ? "images/avatars/avatar.png" : ViewBag.avatar)" />
                             <span class="user-info">
                                 <small>欢迎您,</small>
                                 @ViewBag.userName
@@ -419,6 +419,8 @@
                     <li class="ui-menu-item" onclick="closeTab($('#tabHeader li.active'))"><i class='fa fa-close'></i>关闭当前页</li>
                     <li class="ui-menu-item" onclick="closeTab($('#tabHeader li'))"><i class='fa fa-files-o'></i>关闭所有页</li>
                     <li class="ui-menu-item" onclick="closeTab($('#tabHeader li:not(.active)'))"><i class='fa fa-files-o'></i>关闭其他页</li>
+                    <li style="height: 1px;background-color: #ccc;"></li>
+                    <li class="ui-menu-item" onclick="$($('#tabHeader li.active a').attr('href')).find('iframe')[0].contentWindow.location.reload();"><i class='fa fa-refresh'></i>刷新</li>
                 </ul>
                 <div style="margin:37px 0 0 0">
                     <div class="ace-settings-container" id="ace-settings-container">
@@ -493,18 +495,13 @@
     </div>
 
     <div id="dialog-editor" class="hide" style="padding: 0; overflow-y: hidden">
-        <iframe style="border: none; width: 100%;"></iframe>
+        <iframe style="border: none; width: 100%;height:100%;"></iframe>
     </div>
     <div id="dialog-confirm" class="hide">
         <div class="space-6">
         </div>
         <p class="bigger-110 bolder center grey">
         </p>
-    </div>
-    <div id="content-Loading" style="display: none; position:fixed;background: rgba(255, 255, 255, 0.7); z-index: 13; text-align: center">
-        <h4 class="smaller lighter grey">
-            <i class="ace-icon fa fa-spinner fa-spin orange bigger-125"></i>&nbsp;正在加载...
-        </h4>
     </div>
     <!-- /.main-container -->
     <!-- basic scripts -->
@@ -528,5 +525,14 @@
 
     <!-- inline scripts related to this page -->
     <script src="@Url.Content("~/js/main.js")"></script>
+    <script>
+        //init
+        //$('.nav-list .link:eq(0)').click();
+        openTab({
+            id: 'home',
+            url: 'Home',
+            text: '首页'
+        });
+    </script>
 </body>
 </html>

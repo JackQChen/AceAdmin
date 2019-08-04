@@ -13,20 +13,14 @@ namespace Ace.Entity
     /// <summary>
     /// 角色菜单
     /// </summary>
-    public class Sys_Role_Menu : BaseEntity<int>
+    public class Sys_Role_Menu
     {
-        /// <summary>
-        /// 角色ID
-        /// </summary>
+        [Key]
         [Display(Name = "角色ID")]
-        [Required]
         public int RoleID { get; set; }
 
-        /// <summary>
-        /// 菜单ID
-        /// </summary>
+        [Key]
         [Display(Name = "菜单ID")]
-        [Required]
         public int MenuID { get; set; }
 
     }

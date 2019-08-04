@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ace.Boss.Controllers
+namespace Ace.Admin.Controllers
 {
     public class FileController : Controller
     {

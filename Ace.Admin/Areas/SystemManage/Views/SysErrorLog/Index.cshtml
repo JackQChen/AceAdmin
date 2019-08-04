@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+<script type="text/javascript">
+    var grid_selector = "#gridMain";
+    var pager_selector = "#pagerMain";
+    $(function () {
+        var gridOpt = getGridOption(
+            grid_selector, pager_selector, {
+                url: "@Url.Action("GetErrorPageList")",
+                colModel: [
+                    { label: 'ID', name: 'ID', width: 30, sorttype: "int", key: true },
+                    { label: '控制器', name: 'ControllerName', width: 50 },
+                    { label: '动作', name: 'ActionName', width: 50 },
+                    { label: 'URL', name: 'Url', width: 90 },
+                    { label: '参数', name: 'Parameter', width: 90 },
+                    { label: 'IP地址', name: 'IPAddress', width: 50 },
+                    { label: '状态码', name: 'HttpStatusCode', width: 30 },
+                    { label: '方法', name: 'Method', width: 30 },
+                    { label: '系统', name: 'SystemName', width: 50 },
+                    { label: '用户ID', name: 'UserID', width: 30 },
+                    { label: '登录账号', name: 'LoginName', width: 40 },
+                    { label: '操作时间', name: 'CreateTime', formatter: "date", width: 70, formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' } }
+                ],
+                sortname: 'CreateTime',
+                sortorder: 'desc'
+            });
+        $(grid_selector).jqGrid(gridOpt);
+    });
+    function Refresh() {
+        $(grid_selector).setGridParam({
+            postData: {
+                search: $('#txtSearch').val()
+            },
+        }).trigger('reloadGrid');
+    }
+</script>
+<div>
+    <div class="btn-group">
+        <input type="text" class="search" id="txtSearch" placeholder="日志检索" />
+        <script>
+            $('#txtSearch')[0].onkeydown = function (e) {
+                if (e.keyCode == 13) {
+                    Refresh();
+                }
+            }
+        </script>
+        <button class="btn btn-sm btn-info" onclick="Refresh()">
+            <i class="ace-icon fa fa-refresh bigger-110"></i>刷新
+        </button>
+    </div>
+    <table id="gridMain"></table>
+    <div id="pagerMain"></div>
+</div>

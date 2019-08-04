@@ -9,13 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ace.Core\Ace.Core.csproj" />
     <ProjectReference Include="..\Ace.Entity\Ace.Entity.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Ace.Core">
-      <HintPath>..\Lib\Ace.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

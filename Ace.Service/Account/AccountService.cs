@@ -1,9 +1,10 @@
-﻿using Ace.Dto;
-using Ace.UnitOfWork;
-using Ace.Utility;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Ace.Dto;
+using Ace.Service.Menu;
+using Ace.UnitOfWork;
+using Ace.Utility;
 
 namespace Ace.Service.Account
 {
@@ -14,9 +15,9 @@ namespace Ace.Service.Account
         {
             this._unitOfWork = unitOfWork;
         }
-        public ServiceReturnDto<SysUserDto> Login(string name, string password)
+        public ServiceReturnDto<UserDto> Login(string name, string password)
         {
-            ServiceReturnDto<SysUserDto> sr = new ServiceReturnDto<SysUserDto>() { IsSucceed = true };
+            ServiceReturnDto<UserDto> sr = new ServiceReturnDto<UserDto>() { IsSucceed = true };
             var user = _unitOfWork.SysUserRep.Query.Where(c => c.LoginName == name).FirstOrDefault();
             if (user == null)
             {
@@ -30,7 +31,7 @@ namespace Ace.Service.Account
                 sr.Message = "密码错误";
                 return sr;
             }
-            sr.Data = new SysUserDto()
+            sr.Data = new UserDto()
             {
                 UserID = user.ID,
                 LoginName = user.LoginName,
@@ -38,16 +39,16 @@ namespace Ace.Service.Account
             };
             return sr;
         }
-        public ServiceReturnDto<List<SysRoleMenuDto>> GetCurrentUserMenu(int loginId)
+        public ServiceReturnDto<List<MenuDto>> GetMenuList(int userId)
         {
-            ServiceReturnDto<List<SysRoleMenuDto>> sr = new ServiceReturnDto<List<SysRoleMenuDto>>() { IsSucceed = true };
-            var q = from roleUser in _unitOfWork.SysRoleUserRep.Query.Where(p => p.UserID == loginId)
+            ServiceReturnDto<List<MenuDto>> sr = new ServiceReturnDto<List<MenuDto>>() { IsSucceed = true };
+            var q = from roleUser in _unitOfWork.SysRoleUserRep.Query.Where(p => p.UserID == userId)
                     join roleMenu in _unitOfWork.SysRoleMenuRep.Query on roleUser.RoleID equals roleMenu.RoleID
                     join menu in _unitOfWork.SysMenuRep.Query on roleMenu.MenuID equals menu.ID
-                    select new SysRoleMenuDto()
+                    select new MenuDto()
                     {
-                        ID = menu.ID,
-                        Name = menu.Name,
+                        MenuID = menu.ID,
+                        MenuName = menu.Name,
                         ParentID = menu.ParentID,
                         URL = menu.URL,
                         Icon = menu.Icon,
@@ -55,6 +56,28 @@ namespace Ace.Service.Account
                     };
             sr.Data = q.ToList();
             return sr;
+        }
+        public ServiceReturnDto<List<MenuDto>> GetFullMenuList(List<MenuDto> menuList)
+        {
+            ServiceReturnDto<List<MenuDto>> sr = new ServiceReturnDto<List<MenuDto>>() { IsSucceed = true };
+            var menuService = new MenuService(this._unitOfWork);
+            List<MenuDto> allList = new List<MenuDto>(), fillList = new List<MenuDto>();
+            menuService.GetMenuByParentId(allList, 0);
+            menuList.ForEach(item => CheckParentMenu(allList, fillList, item));
+            sr.Data = menuList.Union(fillList).ToList();
+            return sr;
+        }
+        private void CheckParentMenu(List<MenuDto> allList, List<MenuDto> fillList, MenuDto item)
+        {
+            if (!fillList.Any(p => p.MenuID == item.ParentID))
+            {
+                var pMenu = allList.FirstOrDefault(p => p.MenuID == item.ParentID);
+                if (pMenu != null)
+                {
+                    fillList.Add(pMenu);
+                    CheckParentMenu(allList, fillList, pMenu);
+                }
+            }
         }
 
         //public async Task<ServiceReturnDto> ModifyPassword(ModifyPasswordDto model)

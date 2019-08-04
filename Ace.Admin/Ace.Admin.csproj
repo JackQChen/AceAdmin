@@ -17,11 +17,12 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\SysModuleController.cs" />
+    <Compile Remove="Controllers\SysRoleController.cs" />
+    <Compile Remove="Controllers\SysUserController.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="ZKWeb.System.Drawing" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,24 +31,20 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Ace.Dto\Ace.Dto.csproj" />
+    <ProjectReference Include="..\Ace.Framework\Ace.Framework.csproj" />
     <ProjectReference Include="..\Ace.Service\Ace.Service.csproj" />
+    <ProjectReference Include="..\Ace.UnitOfWork\Ace.UnitOfWork.csproj" />
+    <ProjectReference Include="..\Ace.Utility\Ace.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Areas\SystemManage\Models\" />
-    <Folder Include="Areas\SystemManage\Views\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Ace.Core">
-      <HintPath>..\Lib\Ace.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.Framework">
-      <HintPath>..\Lib\Ace.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.Utility">
-      <HintPath>..\Lib\Ace.Utility.dll</HintPath>
-    </Reference>
+    <Content Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>

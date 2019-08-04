@@ -1,7 +1,7 @@
-﻿@using Ace.Boss.Models;
+﻿@using Ace.Admin.Models;
 
 <ul class="nav nav-list">
-    @foreach (MenuViewModel menu in ViewBag.menuTree)
+    @foreach (MenuTreeModel menu in ViewBag.menuTree)
     {
         <li>
             <a class="dropdown-toggle">
@@ -11,7 +11,7 @@
             </a>
             <b class="arrow"></b>
             <ul class="submenu">
-                @foreach (MenuViewModel m in menu.SubMenu)
+                @foreach (MenuTreeModel m in menu.SubMenu)
                 {
                     <li>
                         <a class="link" tabId="@m.ID" url="@m.URL" data-link="false">

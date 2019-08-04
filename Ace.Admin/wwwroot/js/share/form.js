@@ -6,11 +6,11 @@
         type: "POST",
         data: $('form').serialize() + "&__RequestVerificationToken=" + token.val(),
         beforeSend: function () {
-            $('#divLoading').css("display", "block");
+            parent.showMask($(document.body), "正在保存...");
             btns.attr('disabled', 'disabled');
         },
         complete: function () {
-            $('#divLoading').css("display", "none");
+            parent.removeMask($(document.body));
             btns.removeAttr('disabled');
             if (this.close) {
                 parent.modalClose();
@@ -21,15 +21,19 @@
     };
     if (typeof submitData == 'function') {
         var data = submitData();
-        Object.assign(opt, data);
+        $.extend(opt, data);
     }
     $.ajax(opt);
 };
-function initMultiSelect() {
-    $('.multiselect').multiselect({
-        buttonClass: 'btn btn-primary',
-        nonSelectedText: "未选择",
-        nSelectedText: "项已选择",
-        allSelectedText: "已全选"
-    });
-}
+$.fn.extend({
+    initMultiSelect: function (data) {
+        var opt = {
+            buttonClass: 'btn btn-primary',
+            nonSelectedText: "未选择",
+            nSelectedText: "项已选择",
+            allSelectedText: "已全选"
+        };
+        $.extend(opt, data);
+        this.multiselect(opt);
+    }
+});

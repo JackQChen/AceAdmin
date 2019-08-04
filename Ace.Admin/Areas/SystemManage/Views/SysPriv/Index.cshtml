@@ -1,0 +1,190 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+<script src="@Url.Content("~/js/bootstrap.min.js")"></script>
+<script type="text/javascript">
+    var grid_roleselector = "#gridRole";
+    var pager_roleselector = "#pagerRole";
+    var grid_userselector = "#gridUser";
+    var pager_userselector = "#pagerUser";
+    var roleId = -1, userId = -1;
+    $(function () {
+        $('#container').height(document.documentElement.clientHeight);
+        $('#container').layout({
+            west__size: "50%",
+            west__closable: false,
+        });
+        var gridUserOpt = getGridOption(
+            grid_userselector, pager_userselector, {
+                url: "@Url.Action("GetUserPageList")",
+                colModel: [
+                    { label: 'ID', name: 'UserID', width: 50, sorttype: "int", key: true },
+                    { label: '姓名', name: 'UserName', width: 70 },
+                    { label: '工号', name: 'Code', width: 90 }
+                ],
+                sortname: 'UserID',
+                onSelectRow: function (rowId) {
+                    if (roleId == -1 || userId == -1)
+                        userId = rowId;
+                    if (userId == rowId)
+                        return;
+                    userId = rowId;
+                    getMenu('user', userId);
+                }
+            });
+        $(grid_userselector).jqGrid(gridUserOpt);
+        //role
+        $('#divUser').removeClass("active");
+        $('#divRole').addClass("active");
+        var gridOpt = getGridOption(
+            grid_roleselector, pager_roleselector, {
+                url: "@Url.Action("GetRolePageList")",
+                colModel: [
+                    { label: 'ID', name: 'RoleID', width: 50, sorttype: "int", key: true },
+                    { label: '角色名称', name: 'RoleName', width: 70 },
+                    { label: '描述', name: 'Description', width: 90 }
+                ],
+                sortname: 'RoleID',
+                onSelectRow: function (rowId) {
+                    if (roleId == rowId)
+                        return;
+                    roleId = rowId;
+                    getMenu('role', roleId);
+                }
+            });
+        $(grid_roleselector).jqGrid(gridOpt);
+        //tab switch
+        $('.nav-tabs a').on('click', function (e) {
+            if ($(e.target).parent().hasClass('active'))
+                return;
+            if ($('#divUser').hasClass("active"))
+                getMenu('role', roleId);
+            else
+                getMenu('user', userId);
+        });
+    });
+    function getMenu(type, id) {
+        var postData = {
+            type: 'POST',
+            beforeSend: function () {
+                parent.showMask($('.ui-layout-center'));
+            },
+            complete: function () {
+                parent.removeMask($('.ui-layout-center'));
+            },
+            success: function (data) {
+                var zTree = $.fn.zTree.getZTreeObj("treeMenu");
+                zTree.getNodes().forEach(function (node) {
+                    zTree.setChkDisabled(node, false, false, true);
+                });
+                zTree.checkAllNodes(false);
+                if (type == "role") {
+                    data.forEach(function (menuId) {
+                        var node = zTree.getNodeByParam("MenuID", menuId);
+                        zTree.checkNode(node, true, true);
+                    });
+                }
+                else {
+                    data.roleMenuList.forEach(function (menuId) {
+                        var node = zTree.getNodeByParam("MenuID", menuId);
+                        zTree.checkNode(node, true, true);
+                        zTree.setChkDisabled(node, true);
+                    });
+                }
+            }
+        };
+        if (type == "role") {
+            postData.url = '@Url.Action("GetMenuByRoleId")';
+            postData.data = { roleId: id };
+        }
+        else {
+            postData.url = '@Url.Action("GetMenuByUserId")';
+            postData.data = { userId: id };
+        }
+        $.ajax(postData);
+    }
+    function RefreshUserList() {
+        $(grid_userselector).setGridParam({
+            postData: {
+                search: $('#txtUserSearch').val()
+            },
+        }).trigger('reloadGrid');
+    }
+    function RefreshRoleList() {
+        $(grid_roleselector).setGridParam({
+            postData: {
+                search: $('#txtRoleSearch').val()
+            },
+        }).trigger('reloadGrid');
+    }
+</script>
+<div id="container">
+    <div class="ui-layout-west">
+        <div class="tabbable">
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a data-toggle="tab" href="#divRole">
+                        <i class="ace-icon fa fa-users bigger-120"></i>
+                        角色
+                    </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#divUser">
+                        <i class="ace-icon fa fa-user bigger-120"></i>
+                        用户
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content" style="margin-top:1px">
+                <div id="divRole" class="tab-pane fade in">
+                    <div class="btn-group">
+                        <input type="text" class="search" id="txtRoleSearch" placeholder="角色ID、名称" />
+                        <script>
+                            $('#txtRoleSearch')[0].onkeydown = function (e) {
+                                if (e.keyCode == 13) {
+                                    RefreshRoleList();
+                                }
+                            }
+                        </script>
+                        <button class="btn btn-sm btn-info" onclick="RefreshRoleList()">
+                            <i class="ace-icon fa fa-refresh bigger-110"></i>刷新
+                        </button>
+                    </div>
+                    <table id="gridRole"></table>
+                    <div id="pagerRole"></div>
+                </div>
+                <div id="divUser" class="tab-pane fade in active">
+                    <div class="btn-group">
+                        <input type="text" class="search" id="txtUserSearch" placeholder="用户ID、姓名、工号" />
+                        <script>
+                            $('#txtUserSearch')[0].onkeydown = function (e) {
+                                if (e.keyCode == 13) {
+                                    RefreshUserList();
+                                }
+                            }
+                        </script>
+                        <button class="btn btn-sm btn-info" onclick="RefreshUserList()">
+                            <i class="ace-icon fa fa-refresh bigger-110"></i>刷新
+                        </button>
+                    </div>
+                    <table id="gridUser"></table>
+                    <div id="pagerUser"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui-layout-center">
+        <div class="btn-group">
+            <button class="btn btn-sm btn-success" onclick="">
+                <i class="ace-icon fa fa-save bigger-110"></i>保存
+            </button>
+            <button class="btn btn-sm btn-info" onclick="">
+                <i class="ace-icon fa fa-refresh bigger-110"></i>刷新
+            </button>
+        </div>
+        @{
+            await Html.RenderPartialAsync("MenuTree");
+        }
+    </div>
+</div>

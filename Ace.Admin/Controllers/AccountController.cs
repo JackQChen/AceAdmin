@@ -1,24 +1,29 @@
-﻿using Ace.Core.Cache;
+﻿using System;
+using System.Linq;
+using Ace.Core.Cache;
 using Ace.Framework.Filter;
 using Ace.Framework.Model;
 using Ace.Service.Account;
 using Ace.Utility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
+using Microsoft.Extensions.Configuration;
 
-namespace Ace.Boss.Controllers
+namespace Ace.Admin.Controllers
 {
     public class AccountController : BaseController
     {
         private readonly IAccountService _accountService;
         private readonly ICacheManager _cacheManager;
-        public AccountController(IAccountService _accountService, ICacheManager _cacheManager)
+        private readonly IConfiguration _configuration;
+
+        public AccountController(IAccountService _accountService, IConfiguration _configuration, ICacheManager _cacheManager)
         {
             this._accountService = _accountService;
+            this._configuration = _configuration;
             this._cacheManager = _cacheManager;
         }
+
         [NoLogAction]
         [PublicAction]
         public IActionResult GetValidateCode()
@@ -33,6 +38,18 @@ namespace Ace.Boss.Controllers
         [PublicAction]
         public IActionResult Login()
         {
+            var cookieKey = _configuration.GetSection("ProjectSetting")["CookieKey"];
+            string cookieValue = null;
+            Request.Cookies.TryGetValue(cookieKey, out cookieValue);
+            if (!string.IsNullOrEmpty(cookieValue))
+            {
+                string userCacheKey = GetCacheKey(cookieValue);
+                var currentSysUser = _cacheManager.Get<CurrentSysUser>(userCacheKey);
+                if (currentSysUser != null)
+                {
+                    return new RedirectResult("/Main");
+                }
+            }
             var currentIp = HttpContext.Connection.RemoteIpAddress.ToString();
             ViewBag.safeIP = _projectSetting.Value.SafeIPAddress.Split(",").Any(c => c == currentIp);
             ViewBag.title = _projectSetting.Value.SystemName;
@@ -53,11 +70,13 @@ namespace Ace.Boss.Controllers
                 {
                     return ErrorJsonResult("请输入验证码");
                 }
-                string code = HttpContext.Session.GetString("validateCode").ToLower();
-                if (code != validateCode)
+                string code = HttpContext.Session.GetString("validateCode");
+                if (code != validateCode.ToLower())
                 {
                     return ErrorJsonResult("验证码错误");
                 }
+                //更新验证码
+                HttpContext.Session.SetString("validateCode", ValidateCodeHelper.GetValidateCode().ValidateNum.ToLower());
             }
             var sr = _accountService.Login(name, password);
             if (!sr.IsSucceed)
@@ -65,7 +84,8 @@ namespace Ace.Boss.Controllers
                 return ErrorJsonResult(sr.Message);
             }
             string cookieKey = _projectSetting.Value.CookieKey;
-            string cookieValue = BitConverter.ToInt64(Guid.NewGuid().ToByteArray()).ToString();//每一个登录用户生成不同的cookie
+            //每一个登录用户生成不同的cookie
+            string cookieValue = BitConverter.ToInt64(Guid.NewGuid().ToByteArray()).ToString();
             //写入cookie
             HttpContext.Response.Cookies.Append(cookieKey, cookieValue, new CookieOptions
             {
@@ -75,22 +95,22 @@ namespace Ace.Boss.Controllers
             //当前登录用户
             var currentSysUser = new CurrentSysUser()
             {
-                LoginID = sr.Data.UserID,
+                UserID = sr.Data.UserID,
                 LoginName = sr.Data.LoginName,
                 UserName = sr.Data.UserName
             };
-            var menuList = _accountService.GetCurrentUserMenu(currentSysUser.LoginID).Data;
+            var menuList = _accountService.GetMenuList(currentSysUser.UserID).Data;
             currentSysUser.MenuList = menuList.Select(s => new CurrentSysUserMenu()
             {
-                ID = s.ID,
-                Name = s.Name,
+                ID = s.MenuID,
+                Name = s.MenuName,
                 URL = s.URL,
                 ParentID = s.ParentID,
                 Icon = s.Icon,
                 Sort = s.Sort
             }).ToList();
             //将用户权限以cookieValue为键写入cache
-            string userCacheKey = "user_" + cookieValue;
+            string userCacheKey = GetCacheKey(cookieValue);
             //滑动方式添加缓存
             _cacheManager.Add(userCacheKey, currentSysUser, new TimeSpan(0, _projectSetting.Value.SessionTimeOut, 0), true);
 
@@ -102,9 +122,10 @@ namespace Ace.Boss.Controllers
         public IActionResult Logout()
         {
             var cookieKey = _projectSetting.Value.CookieKey;
-            Request.Cookies.TryGetValue(cookieKey, out string cookieValue);
+            string cookieValue = null;
+            Request.Cookies.TryGetValue(cookieKey, out cookieValue);
             //清除用户缓存信息
-            string userCacheKey = "user_" + cookieValue;
+            string userCacheKey = GetCacheKey(cookieValue);
             _cacheManager.Remove(userCacheKey);
             //清除cookie
             HttpContext.Response.Cookies.Append(cookieKey, cookieValue, new CookieOptions

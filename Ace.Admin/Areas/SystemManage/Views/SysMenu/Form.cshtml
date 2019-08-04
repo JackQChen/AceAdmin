@@ -1,0 +1,87 @@
+﻿@using Ace.Dto;
+@model MenuDto;
+@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_LayoutForm.cshtml";
+}
+
+<script>
+    $(function () {
+        initSearchControl({
+            id: 'parentMenu',
+            name: 'ParentID',
+            value: '@Model.ParentID',
+            nullValue: 0,
+            displayText: '@Html.Raw(Model.ParentName)',
+            dataSource: @Html.Raw(this.ViewBag.menuList),
+            colModel: [
+                { label: 'ID', name: 'MenuID', width: 60, key: true },
+                { label: '菜单名称', name: 'MenuName' }
+            ]
+        });
+    });
+    function submitData() {
+        return {
+            url: "@Url.Action("Form")",
+            success: function (data) {
+                if (data.code != 200) {
+                    alert(data.msg);
+                    this.close = false;
+                }
+            }
+        };
+    }
+</script>
+<div class="page-content">
+    <div class="row">
+        <div class="col-xs-12">
+            <form class="form-horizontal" role="form">
+                <div class="space"></div>
+                <input type="hidden" name="MenuID" value="@Model.MenuID" />
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">ID</label>
+                    <div class="col-sm-9">
+                        <input id="txtId" readonly type="text" class="col-sm-10 col-xs-12" />
+                        <script>
+                            var id = $("form input[name='MenuID']").val();
+                            if (id == 0)
+                                $("#txtId").val("新增");
+                            else
+                                $("#txtId").val(id);
+                        </script>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">菜单名称</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="MenuName" value="@Model.MenuName" class="col-sm-10 col-xs-12" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">上级菜单</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="parentMenu" displaymember='MenuName' valuemember='MenuID' autocomplete="off" class="col-sm-10 col-xs-12" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">URL</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="URL" value="@Model.URL" class="col-sm-10 col-xs-12" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">排序码</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="Sort" value="@Model.Sort" class="col-sm-10 col-xs-12" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">图标</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="Icon" value="@Model.Icon" class="col-sm-10 col-xs-12" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

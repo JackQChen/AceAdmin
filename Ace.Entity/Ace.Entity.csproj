@@ -10,8 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Ace.Core">
-      <HintPath>..\Lib\Ace.Core.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\Ace.Core\Ace.Core.csproj" />
   </ItemGroup>
 </Project>

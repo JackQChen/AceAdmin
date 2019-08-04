@@ -21,10 +21,10 @@ namespace Ace.Entity
         public string Name { get; set; }
 
         /// <summary>
-        /// 备注
+        /// 描述
         /// </summary>
-        [Display(Name = "备注")]
-        [MaxLength(32, ErrorMessage = "{0}最长{1}位")]
-        public string Remark { get; set; }
+        [Display(Name = "描述")]
+        [MaxLength(50, ErrorMessage = "{0}最长{1}位")]
+        public string Description { get; set; }
     }
 }

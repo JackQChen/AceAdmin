@@ -1,4 +1,4 @@
-﻿namespace Ace.Boss
+﻿namespace Ace.Admin
 {
     /// <summary>
     /// jqGrid分页数据

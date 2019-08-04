@@ -19,7 +19,7 @@ function getGridOption(grid_selector, pager_selector, option) {
     var opt = {
         mtype: "POST",
         datatype: "json",
-        height: $(document).height() - $(grid_selector).offset().top - 97,
+        height: $(document).height() - $(grid_selector).offset().top - (option.autowidth == false ? 114 : 97),
         rowNum: 10,
         rowList: [10, 15, 30],
         viewrecords: true,
@@ -27,12 +27,14 @@ function getGridOption(grid_selector, pager_selector, option) {
         autowidth: true,
         loadComplete: function () {
             setTimeout(function () { updatePagerIcons(); }, 0);
+            if (option.multiselect)
+                return;
             var ids = $(grid_selector).getDataIDs();
             if (ids.length > 0)
                 $(grid_selector).setSelection(ids[0]);
         }
     };
-    return Object.assign(opt, option);
+    return $.extend(opt, option);
 }
 
 function modalOpen(opt) {
@@ -57,7 +59,10 @@ function modalConfirmClose() {
 
 function deleteForm(arg) {
     var token = $("input[name=__RequestVerificationToken]");
-    arg.type = "POST";
-    arg.data = "__RequestVerificationToken=" + token.val();
-    $.ajax(arg);
+    var data = {
+        type: "POST",
+        data: "__RequestVerificationToken=" + token.val()
+    };
+    $.extend(data, arg);
+    $.ajax(data);
 };

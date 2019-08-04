@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="@Url.Content("~/css/ace.min.css")" />
     <link rel="stylesheet" href="@Url.Content("~/css/ace-rtl.min.css")" />
     <link rel="stylesheet" href="@Url.Content("~/css/ace-skins.min.css")" />
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="@Url.Content("~/css/ace-part2.min.css")" class="ace-main-stylesheet" />
+    <![endif]-->
     <!--[if !IE]> -->
     <script src="@Url.Content("~/js/jquery-2.1.1.min.js")"></script>
     <!-- <![endif]-->
@@ -32,9 +35,6 @@
 </head>
 <body style="background:white">
     <div class="main-container">
-        <div id="divLoading" style="display: none; position: fixed; width: 100%; height: 100%;
-        background: rgba(255, 255, 255, 0.7); z-index: 999;">
-        </div>
         @RenderBody()
     </div>
     @Html.AntiForgeryToken()

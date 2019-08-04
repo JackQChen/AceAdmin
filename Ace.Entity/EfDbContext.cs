@@ -1,27 +1,29 @@
-﻿using Ace.Core.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
+using Ace.Core.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Ace.Entity
 {
     public class EfDbContext : DbContext
     {
+        public static readonly LoggerFactory LoggerFactory = new LoggerFactory(new[] { new EFLoggerProvider() });
         public EfDbContext(DbContextOptions<EfDbContext> options) : base(options)
         {
         }
-        //配置数据库连接
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // optionsBuilder.UseSqlServer("xxxx connection string");
+            optionsBuilder.UseLoggerFactory(LoggerFactory);
             base.OnConfiguring(optionsBuilder);
         }
 
-        //第一次使用EF功能时执行一次，以后不再执行
+        //首次执行
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //获取当前程序集中有基类并且基类是泛型的类
+            //获取当前程序集中基类为泛型的类
             var typesToRegister = Assembly.GetExecutingAssembly().GetTypes().Where(c => c.BaseType != null && c.BaseType.IsGenericType).ToList();
             foreach (var type in typesToRegister)
             {
@@ -32,7 +34,6 @@ namespace Ace.Entity
                     modelBuilder.ApplyConfiguration(configurationInstance);
                 }
             }
-
             base.OnModelCreating(modelBuilder);
         }
     }

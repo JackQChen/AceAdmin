@@ -1,14 +1,12 @@
-﻿using Ace.Boss.Models;
-using Ace.Core.Service;
+﻿using Ace.Admin.Models;
 using Ace.Dto;
 using Ace.Framework.Controller;
 using Ace.Framework.Model;
 using Ace.Service.Log;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
-using System;
 
-namespace Ace.Boss.Controllers
+namespace Ace.Admin.Controllers
 {
     public class BaseController : SuperController
     {
@@ -19,33 +17,33 @@ namespace Ace.Boss.Controllers
         {
         }
 
-        public override RequestLogModel GetLog(ActionExecutingContext context)
+        public override InfoLogModel GetLog(ActionExecutingContext context)
         {
             _logService = (ILogService)HttpContext.RequestServices.GetService(typeof(ILogService));
             _projectSetting = (IOptions<ProjectSetting>)HttpContext.RequestServices.GetService(typeof(IOptions<ProjectSetting>));
-            var requestLogModel = base.GetLog(context);
-            if (requestLogModel != null)
+            var logModel = base.GetLog(context);
+            if (logModel != null)
             {
-                requestLogModel.SystemName = _projectSetting.Value.SystemName;
+                logModel.SystemName = _projectSetting.Value.SystemName;
                 //TODO 写日志
-                RequestLogDto requestLogDto = new RequestLogDto()
+                InfoLogDto logDto = new InfoLogDto()
                 {
-                    SystemName = requestLogModel.SystemName,
-                    ActionName = requestLogModel.ActionName,
-                    ControllerName = requestLogModel.ControllerName,
-                    HttpStatusCode = requestLogModel.HttpStatusCode,
-                    IpAddress = requestLogModel.IpAddress,
-                    LoginId = requestLogModel.LoginId,
-                    LoginName = requestLogModel.LoginName,
-                    Method = requestLogModel.Method,
-                    Parameter = requestLogModel.Parameter,
-                    Url = requestLogModel.Url,
-                    OperateTime = requestLogModel.OperateTime
+                    SystemName = logModel.SystemName,
+                    ActionName = logModel.ActionName,
+                    ControllerName = logModel.ControllerName,
+                    HttpStatusCode = logModel.HttpStatusCode,
+                    IPAddress = logModel.IpAddress,
+                    UserID = logModel.UserID,
+                    LoginName = logModel.LoginName,
+                    Method = logModel.Method,
+                    Parameter = logModel.Parameter,
+                    Url = logModel.Url,
+                    OperateTime = logModel.OperateTime
                 };
-                _logService.WriteRequestLog(requestLogDto);
-                LogServiceHelper.Intance.Write(new LogModel() { CreatedTime = DateTime.Now, Dir = "request", Msg = requestLogDto.Url + "?" + requestLogDto.Parameter, Operator = requestLogDto.LoginName });
+                _logService.WriteInfoLog(logDto);
+                Core.Service.LogService.Info(logDto.Url + (string.IsNullOrEmpty(logDto.Parameter) ? "" : ("?" + logDto.Parameter)));
             }
-            return requestLogModel;
+            return logModel;
         }
     }
 }
