@@ -1,13 +1,11 @@
-﻿#EF相关
-Install-Package Microsoft.EntityFrameworkCore.Tools
-Install-Package Microsoft.EntityFrameworkCore.Design
-#MySql
-Install-Package MySql.Data.EntityFrameworkCore
-#MsSql
-Install-Package Microsoft.EntityFrameworkCore.SqlServer
+﻿#Migratin
+add-migration Initial
+script-migration
 
-#DBFirst创建Model
-Scaffold-DbContext -Connection "Server=localhost;User Id=root;Password=123456;Database=ACE" -Provider "MySql.Data.EntityFrameworkCore" -OutputDir "Models"
+#node换源
+npm config set registry=http://registry.npm.taobao.org
+npm set sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
+npm install node-sass
 
 #发布
 #VS解决方案文件夹运行
