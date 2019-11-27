@@ -1,12 +1,25 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+    <el-form
+      ref="loginForm"
+      :model="loginForm"
+      :rules="loginRules"
+      class="login-form"
+      auto-complete="on"
+      label-position="left"
+    >
       <h3 class="title">vue-admin-template</h3>
-      <el-form-item prop="username">
+      <el-form-item prop="userName">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-        <el-input v-model="loginForm.userName" name="userName" type="text" auto-complete="on" placeholder="请输入用户名" />
+        <el-input
+          v-model="loginForm.userName"
+          name="userName"
+          type="text"
+          auto-complete="on"
+          placeholder="请输入用户名"
+        />
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
@@ -18,19 +31,23 @@
           name="password"
           auto-complete="on"
           placeholder="password"
-          @keyup.enter.native="handleLogin" />
+          @keyup.enter.native="handleLogin"
+        />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="pwdType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
       <el-form-item>
-        <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
-          Sign in
-        </el-button>
+        <el-button
+          :loading="loading"
+          type="primary"
+          style="width:100%;"
+          @click.native.prevent="handleLogin"
+        >Sign in</el-button>
       </el-form-item>
       <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
-        <span> password: admin</span>
+        <span>password: admin</span>
       </div>
     </el-form>
   </div>
@@ -62,7 +79,9 @@ export default {
         password: '1'
       },
       loginRules: {
-        userName: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        userName: [
+          { required: true, trigger: 'blur', validator: validateUsername }
+        ],
         password: [{ required: true, trigger: 'blur', validator: validatePass }]
       },
       loading: false,
@@ -90,12 +109,15 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('Login', this.loginForm).then(() => {
-            this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
-          }).catch(() => {
-            this.loading = false
-          })
+          this.$store
+            .dispatch('Login', this.loginForm)
+            .then(() => {
+              this.loading = false
+              this.$router.push({ path: this.redirect || '/' })
+            })
+            .catch(() => {
+              this.loading = false
+            })
         } else {
           console.log('error submit!!')
           return false
@@ -107,8 +129,8 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
-$bg:#2d3a4b;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$light_gray: #eee;
 
 /* reset element-ui css */
 .login-container {
@@ -137,13 +159,12 @@ $light_gray:#eee;
     color: #454545;
   }
 }
-
 </style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 .login-container {
   position: fixed;
   height: 100%;
