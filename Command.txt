@@ -1,0 +1,32 @@
+﻿#Migratin
+add-migration Initial
+script-migration
+
+#node换源
+npm config set registry=http://registry.npm.taobao.org
+npm set sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
+npm install node-sass
+
+#发布
+#VS解决方案文件夹运行
+dotnet publish -r linux-arm
+
+#树莓派换源
+修改/etc/apt/sources.list内容为
+deb http://mirrors.ustc.edu.cn/raspbian/raspbian/ stretch main contrib non-free rpi
+deb-src http://mirrors.ustc.edu.cn/raspbian/raspbian/ stretch main contrib non-free rpi
+
+#安装远程桌面
+sudo apt-get install xrdp
+
+#安装.net core 2.2
+https://dotnet.microsoft.com/download 选择ARM版本的Runtime文件
+#解压文件内容到树莓派的/opt/dotnet文件夹中（需要创建dotnet文件夹）
+#在local/bin创建dotnet快捷方式
+sudo ln -s /opt/dotnet/dotnet /usr/local/bin
+
+#安装MySQL
+sudo apt-get install mysql-server
+
+#运行
+dotnet ACEAdmin.dll --server.urls "http://*:5000"
