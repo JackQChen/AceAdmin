@@ -9,13 +9,13 @@
       label-position="left"
     >
       <h3 class="title">vue-admin-template</h3>
-      <el-form-item prop="userName">
+      <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          v-model="loginForm.userName"
-          name="userName"
+          v-model="loginForm.username"
+          name="username"
           type="text"
           auto-complete="on"
           placeholder="请输入用户名"
@@ -47,7 +47,7 @@
       </el-form-item>
       <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
-        <span>password: admin</span>
+        <span>password: 1</span>
       </div>
     </el-form>
   </div>
@@ -75,7 +75,7 @@ export default {
     }
     return {
       loginForm: {
-        userName: 'admin',
+        username: 'admin',
         password: '1'
       },
       loginRules: {
@@ -110,10 +110,13 @@ export default {
         if (valid) {
           this.loading = true
           this.$store
-            .dispatch('Login', this.loginForm)
+            .dispatch('user/login', this.loginForm)
             .then(() => {
+              this.$router.push({
+                path: this.redirect || '/',
+                query: this.otherQuery
+              })
               this.loading = false
-              this.$router.push({ path: this.redirect || '/' })
             })
             .catch(() => {
               this.loading = false

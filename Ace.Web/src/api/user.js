@@ -1,13 +1,10 @@
 import request from '@/utils/request'
 
-export function login(username, password) {
+export function login(data) {
   return request({
     url: 'TokenAuth/Authenticate',
     method: 'post',
-    data: {
-      username,
-      password
-    }
+    data
   })
 }
 

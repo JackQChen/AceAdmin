@@ -16,10 +16,11 @@ router.beforeEach((to, from, next) => {
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
       if (store.getters.roles.length === 0) {
-        store.dispatch('GetInfo').then(res => { // 拉取用户信息
+        store.dispatch('user/getInfo').then(res => { // 拉取用户信息
+          store.dispatch('permission/generateRoutes', 'admin')
           next()
         }).catch((err) => {
-          store.dispatch('FedLogOut').then(() => {
+          store.dispatch('user/resetToken').then(() => {
             Message.error(err || 'Verification failed, please login again')
             next({ path: '/' })
           })

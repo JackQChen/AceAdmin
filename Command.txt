@@ -29,4 +29,4 @@ sudo ln -s /opt/dotnet/dotnet /usr/local/bin
 sudo apt-get install mysql-server
 
 #运行
-dotnet ACEAdmin.dll --server.urls "http://*:5000"
+dotnet Ace.Web.Host.dll --server.urls "http://*:5000"
