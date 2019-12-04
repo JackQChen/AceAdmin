@@ -3,12 +3,13 @@
     <el-table
       v-loading="listLoading"
       :data="list"
+      :default-sort = "{prop: 'id', order: 'ascending'}"
       element-loading-text="加载中..."
       border
       fit
       highlight-current-row
     >
-      <el-table-column align="center" label="ID" width="95">
+      <el-table-column align="center" label="ID" sortable="custom" width="100">
         <template slot-scope="scope">{{ scope.row.id }}</template>
       </el-table-column>
       <el-table-column label="菜单名称">
