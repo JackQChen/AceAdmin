@@ -8,16 +8,23 @@ export function login(data) {
   })
 }
 
-export function getInfo(token) {
+export function getInfo() {
   return request({
     url: 'Session/GetCurrentLoginInformations',
     method: 'get'
   })
 }
 
+export function getPermission() {
+  return request({
+    url: 'Configuration/GetMenuTree',
+    method: 'get'
+  })
+}
+
 export function logout() {
   return request({
-    url: '/user/logout',
+    url: 'TokenAuth/Reset',
     method: 'post'
   })
 }

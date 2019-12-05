@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo } from '@/api/account'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const state = {
@@ -37,9 +37,9 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit, state }) {
+  getInfo({ commit }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(data => {
+      getInfo().then(data => {
         const { name, avatar } = data.user
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)

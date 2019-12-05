@@ -1,3 +1,4 @@
+import { getPermission } from '@/api/account'
 import { asyncRoutes, constantRoutes } from '@/router'
 
 const state = {
@@ -13,9 +14,12 @@ const mutations = {
 const actions = {
   generateRoutes({ commit }) {
     return new Promise(resolve => {
-      const accessedRoutes = asyncRoutes || []
-      commit('SET_ROUTES', accessedRoutes)
-      resolve(accessedRoutes)
+      getPermission(1).then(data => {
+        const accessedRoutes = asyncRoutes || []
+        commit('SET_ROUTES', accessedRoutes)
+        resolve(accessedRoutes)
+        resolve()
+      })
     })
   }
 }

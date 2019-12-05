@@ -4,5 +4,5 @@ const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  BASE_API: '"http://192.168.1.33:5000/api/services/app/"',
+  BASE_API: '"http://cysoft.uicp.net:8081/api/services/app/"'
 })
