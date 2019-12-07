@@ -4,6 +4,7 @@
       v-loading="listLoading"
       :data="list"
       :default-sort = "{prop: 'id', order: 'ascending'}"
+      :cell-style="{padding:'0px'}"
       element-loading-text="加载中..."
       border
       fit
