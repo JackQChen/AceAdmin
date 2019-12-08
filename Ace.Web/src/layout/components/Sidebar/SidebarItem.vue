@@ -2,12 +2,14 @@
   <div class="menu-wrapper">
     <template v-if="item.children.length===0">
       <el-menu-item :index="String(item.id)" :class="{'submenu-title-noDropdown':!isNest}">
+        <i :class="item.icon"/>
         <item :title="item.name"/>
       </el-menu-item>
     </template>
 
     <el-submenu v-else :index="String(item.id)">
       <template slot="title">
+        <i :class="item.icon"/>
         <item :title="item.name"/>
       </template>
       <sidebar-item
