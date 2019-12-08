@@ -15,10 +15,11 @@ export function getInfo() {
   })
 }
 
-export function getPermission() {
+export function getMenuTree(pid) {
   return request({
     url: 'Configuration/GetMenuTree',
-    method: 'get'
+    method: 'get',
+    params: { parentId: pid }
   })
 }
 

@@ -1,24 +1,26 @@
-import { getPermission } from '@/api/account'
-import { asyncRoutes, constantRoutes } from '@/router'
+import { getMenuTree } from '@/api/account'
+import { constantRoutes } from '@/router'
 
 const state = {
-  routes: []
+  routes: [],
+  menus: []
 }
 
 const mutations = {
   SET_ROUTES: (state, routes) => {
     state.routes = constantRoutes.concat(routes)
+  },
+  SET_MENUS: (state, menus) => {
+    state.menus = menus
   }
 }
 
 const actions = {
-  generateRoutes({ commit }) {
+  getMenus({ commit }) {
     return new Promise(resolve => {
-      getPermission(1).then(data => {
-        const accessedRoutes = asyncRoutes || []
-        commit('SET_ROUTES', accessedRoutes)
-        resolve(accessedRoutes)
-        resolve()
+      getMenuTree(1).then(data => {
+        commit('SET_MENUS', data)
+        resolve(data)
       })
     })
   }

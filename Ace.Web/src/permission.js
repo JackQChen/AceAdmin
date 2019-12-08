@@ -17,7 +17,7 @@ router.beforeEach((to, from, next) => {
     } else {
       if (store.getters.name === '') {
         store.dispatch('user/getInfo').then(res => { // 拉取用户信息
-          store.dispatch('permission/generateRoutes')
+          store.dispatch('permission/getMenus')
           next()
         }).catch((err) => {
           store.dispatch('user/resetToken').then(() => {
