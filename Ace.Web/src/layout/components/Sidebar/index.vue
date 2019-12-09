@@ -12,7 +12,7 @@
         :collapse-transition="false"
         mode="vertical"
       >
-        <sidebar-item v-for="menu in menus" :key="menu.id" :item="menu" :base-path="menu.url" />
+        <sidebar-item v-for="menu in menus" :key="menu.id" :item="menu" />
       </el-menu>
     </el-scrollbar>
   </div>
