@@ -3,13 +3,13 @@
     <template v-if="item.children.length===0">
       <app-link :to="item.url">
         <el-menu-item :index="String(item.id)" :class="{'submenu-title-noDropdown':!isNest}">
-          <item :icon="item.icon" :title="item.name"/>
+          <item :icon="item.icon?item.icon:'menu'" :title="item.name"/>
         </el-menu-item>
       </app-link>
     </template>
     <el-submenu v-else :index="String(item.id)">
       <template slot="title">
-        <item :icon="item.icon" :title="item.name"/>
+        <item :icon="item.icon?item.icon:'menu'" :title="item.name"/>
       </template>
       <sidebar-item
         v-for="child in item.children"
