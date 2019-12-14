@@ -21,10 +21,18 @@
       </router-link>
     </scroll-pane>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-      <li @click="refreshSelectedTag(selectedTag)">Refresh</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">Close</li>
-      <li @click="closeOthersTags">Close Others</li>
-      <li @click="closeAllTags(selectedTag)">Close All</li>
+      <li @click="refreshSelectedTag(selectedTag)">
+        <svg-icon icon-class="sync-alt" />刷新页面
+      </li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
+        <svg-icon icon-class="ban" />关闭当前
+      </li>
+      <li @click="closeOthersTags">
+        <svg-icon icon-class="times" />关闭其他
+      </li>
+      <li @click="closeAllTags(selectedTag)">
+        <svg-icon icon-class="times-circle" />关闭所有
+      </li>
     </ul>
   </div>
 </template>
@@ -183,7 +191,7 @@ export default {
       const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
       const offsetWidth = this.$el.offsetWidth // container width
       const maxLeft = offsetWidth - menuMinWidth // left boundary
-      const left = e.clientX - offsetLeft + 15 // 15: margin right
+      const left = e.clientX - offsetLeft
 
       if (left > maxLeft) {
         this.left = maxLeft
@@ -220,7 +228,7 @@ export default {
       color: #495060;
       background: #fff;
       padding: 0 8px;
-      font-size: 12px;
+      font-size: 14px;
       margin-left: 5px;
       margin-top: 4px;
       &:first-of-type {
@@ -254,7 +262,7 @@ export default {
     list-style-type: none;
     padding: 5px 0;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 400;
     color: #333;
     box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
@@ -264,6 +272,10 @@ export default {
       cursor: pointer;
       &:hover {
         background: #eee;
+      }
+      .svg-icon {
+        vertical-align: -0.1em;
+        margin-right: 8px;
       }
     }
   }
@@ -285,7 +297,7 @@ export default {
       &:before {
         transform: scale(0.6);
         display: inline-block;
-        vertical-align: -3px;
+        vertical-align: -2px;
       }
       &:hover {
         background-color: #b4bccc;

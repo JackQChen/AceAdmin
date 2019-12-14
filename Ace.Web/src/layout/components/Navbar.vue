@@ -2,6 +2,7 @@
   <div class="navbar">
     <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
     <el-menu
+      :default-active="String(1)"
       class="subSystem-container"
       mode="horizontal">
       <el-menu-item index="1">处理中心</el-menu-item>
