@@ -1,10 +1,11 @@
 <template>
-  <div class="app-container">
+  <div>
     <el-table
       v-loading="listLoading"
       :data="list"
       :default-sort = "{prop: 'id', order: 'ascending'}"
       :cell-style="{padding:'0px'}"
+      :height="tableHeight"
       element-loading-text="加载中..."
       border
       fit
@@ -36,6 +37,14 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      :current-page="1"
+      :page-sizes="[100, 200, 300, 400]"
+      :page-size="100"
+      :total="400"
+      background
+      layout="total,sizes,prev,pager,next,jumper"
+    />
   </div>
 </template>
 
@@ -56,7 +65,12 @@ export default {
   data() {
     return {
       list: null,
-      listLoading: true
+      listLoading: true,
+      listQuery: {
+        pageIndex: 1,
+        pageSize: 10
+      },
+      tableHeight: window.innerHeight - 155
     }
   },
   created() {
@@ -73,3 +87,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.el-pagination{
+  padding:20px 40px
+}
+</style>
