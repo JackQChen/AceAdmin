@@ -32,27 +32,27 @@ namespace Ace.Common.Dto
         [Range(1, int.MaxValue)]
         public int MaxResultCount { get; set; } = 10;
 
-        private int _pageIndex = 1;
+        private int _pageNumber = 1;
         /// <summary>
         /// 页码
         /// </summary>
         [Range(1, int.MaxValue)]
-        public int PageIndex
+        public int PageNumber
         {
-            get { return _pageIndex; }
+            get { return _pageNumber; }
             set
             {
                 if (PagedType == PagedType.Export)
                     return;
-                _pageIndex = value;
-                SkipCount = (_pageIndex - 1) * MaxResultCount;
+                _pageNumber = value;
+                SkipCount = (_pageNumber - 1) * MaxResultCount;
             }
         }
 
         /// <summary>
-        /// 每页数量
+        /// 每页条数
         /// </summary>
-        public int PageCount
+        public int PageSize
         {
             get { return MaxResultCount; }
             set
@@ -60,7 +60,7 @@ namespace Ace.Common.Dto
                 if (PagedType == PagedType.Export)
                     return;
                 MaxResultCount = value;
-                SkipCount = (_pageIndex - 1) * MaxResultCount;
+                SkipCount = (_pageNumber - 1) * MaxResultCount;
             }
         }
 
@@ -81,7 +81,7 @@ namespace Ace.Common.Dto
                 _pagedType = value;
                 if (_pagedType == PagedType.Export)
                 {
-                    _pageIndex = 1;
+                    _pageNumber = 1;
                     SkipCount = 0;
                     MaxResultCount = int.MaxValue;
                 }
