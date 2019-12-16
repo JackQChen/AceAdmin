@@ -38,12 +38,13 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      :current-page="1"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
-      :total="400"
+      :page-sizes="[10,20,50]"
+      :page-size="listQuery.pageSize"
+      :total="totalCount"
       background
       layout="total,sizes,prev,pager,next,jumper"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
     />
   </div>
 </template>
@@ -67,9 +68,10 @@ export default {
       list: null,
       listLoading: true,
       listQuery: {
-        pageIndex: 1,
+        pageNumber: 1,
         pageSize: 10
       },
+      totalCount: 0,
       tableHeight: window.innerHeight - 155
     }
   },
@@ -77,10 +79,19 @@ export default {
     this.fetchData()
   },
   methods: {
+    handleSizeChange(val) {
+      this.listQuery.pageSize = val
+      this.fetchData()
+    },
+    handleCurrentChange(val) {
+      this.listQuery.pageNumber = val
+      this.fetchData()
+    },
     fetchData() {
       this.listLoading = true
       getList(this.listQuery).then(data => {
         this.list = data.items
+        this.totalCount = data.totalCount
         this.listLoading = false
       })
     }
