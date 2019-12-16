@@ -4,7 +4,7 @@ using Abp.Application.Services.Dto;
 
 namespace Ace.Common.Dto
 {
-    public class CommonRequestDto : PagedAndSortedResultRequestDto
+    public class CommonRequestDto : IPagedAndSortedResultRequest
     {
         /// <summary>
         /// 关键字
@@ -26,10 +26,15 @@ namespace Ace.Common.Dto
         /// </summary>
         public DateTime? EndTime { get; set; }
 
-        private int _pageIndex = 1;
+        [Range(0, int.MaxValue)]
+        public int SkipCount { get; set; }
 
+        [Range(1, int.MaxValue)]
+        public int MaxResultCount { get; set; } = 10;
+
+        private int _pageIndex = 1;
         /// <summary>
-        /// 当前页码
+        /// 页码
         /// </summary>
         [Range(1, int.MaxValue)]
         public int PageIndex
@@ -37,56 +42,48 @@ namespace Ace.Common.Dto
             get { return _pageIndex; }
             set
             {
-                if (_pagedType != selectConst)
+                if (PagedType == PagedType.Export)
                     return;
                 _pageIndex = value;
-                _skipCount = (_pageIndex - 1) * this._maxResultCount;
+                SkipCount = (_pageIndex - 1) * MaxResultCount;
             }
         }
-
-        private int _skipCount = 0;
-        public override int SkipCount
-        {
-            get
-            {
-                return _skipCount;
-            }
-        }
-
-        private int _maxResultCount = 10;
-        [Range(1, int.MaxValue)]
-        public override int MaxResultCount
-        {
-            get
-            {
-                return _maxResultCount;
-            }
-            set
-            {
-                if (_pagedType != selectConst)
-                    return;
-                _maxResultCount = value;
-                _skipCount = (_pageIndex - 1) * this._maxResultCount;
-            }
-        }
-
-        private const string selectConst = "select";
-        private string _pagedType = "select";
 
         /// <summary>
-        /// 分页方式 select=分页 export=不分页
+        /// 每页数量
         /// </summary>
-        public string PagedType
+        public int PageCount
+        {
+            get { return MaxResultCount; }
+            set
+            {
+                if (PagedType == PagedType.Export)
+                    return;
+                MaxResultCount = value;
+                SkipCount = (_pageIndex - 1) * MaxResultCount;
+            }
+        }
+
+        /// <summary>
+        /// 排序
+        /// </summary>
+        public string Sorting { get; set; }
+
+        private PagedType _pagedType = PagedType.Select;
+        /// <summary>
+        /// 分页方式
+        /// </summary>
+        public PagedType PagedType
         {
             get { return _pagedType; }
             set
             {
                 _pagedType = value;
-                if (_pagedType != "select")
+                if (_pagedType == PagedType.Export)
                 {
-                    _skipCount = 0;
                     _pageIndex = 1;
-                    _maxResultCount = int.MaxValue;
+                    SkipCount = 0;
+                    MaxResultCount = int.MaxValue;
                 }
             }
         }
