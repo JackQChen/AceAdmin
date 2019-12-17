@@ -52,6 +52,17 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/admin',
+    component: Layout,
+    children: [
+      {
+        path: 'auditlog',
+        name: 'Auditlog',
+        component: () => import('@/views/auditlog/index'),
+        meta: { title: '审计日志' }
+      }]
+  },
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
