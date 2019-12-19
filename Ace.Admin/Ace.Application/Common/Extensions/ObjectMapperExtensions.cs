@@ -4,7 +4,7 @@ using Abp.Application.Services.Dto;
 using Abp.Domain.Entities;
 using Abp.ObjectMapping;
 
-namespace Ace.Common
+namespace Ace.Common.Extensions
 {
     public static class ObjectMapperExtensions
     {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Ace.Common
+namespace Ace.Common.Extensions
 {
     public static class QueryableExtensions
     {
