@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Net.Http.Headers;
-using System.Text;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,34 +15,21 @@ namespace Ace.Controllers
             _env = env;
         }
 
+        /// <summary>
+        /// 文件上传
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         [HttpPost]
-        public string UploadFiles(List<IFormFile> files)
+        [RequestSizeLimit(10_000_000)]
+        //[DisableRequestSizeLimit]
+        public async Task<object> UploadFile(IFormFile file)
         {
-            long size = 0;
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach (var file in files)
+            return await Task.FromResult(new
             {
-                //var fileName = file.FileName;
-                var fileName = ContentDispositionHeaderValue
-                                .Parse(file.ContentDisposition)
-                                .Name
-                                .Trim('"');
-                var fileDir = Path.Combine(_env.WebRootPath, "UploadFiles");
-                if (!Directory.Exists(fileDir))
-                {
-                    Directory.CreateDirectory(fileDir);
-                }
-                string filePath = fileDir + $@"\{fileName}";
-                size += file.Length;
-                using (FileStream fs = System.IO.File.Create(filePath))
-                {
-                    file.CopyTo(fs);
-                    fs.Flush();
-                }
-                stringBuilder.AppendLine($"文件\"{fileName}\" /{size}字节上传成功 <br/>");
-            }
-            stringBuilder.AppendLine($"共{files.Count}个文件 /{size}字节上传成功! <br/>");
-            return stringBuilder.ToString();
+                fileName = file.FileName,
+                fileSize = file.Length
+            });
         }
     }
 }
