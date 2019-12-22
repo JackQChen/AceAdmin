@@ -39,7 +39,8 @@ namespace Ace.AuditLogs
                    .WhereIf(input.EndTime.HasValue, x => x.ExecutionTime < input.EndTime)
                    ;
             var totalCount = await query.CountAsync();
-            query = query.OrderBy(input.Sorting);
+            if (!input.Sorting.IsNullOrWhiteSpace())
+                query = query.OrderBy(input.Sorting);
             query = query.Skip(input.SkipCount).Take(input.MaxResultCount);
             var entities = await query.ToListAsync();
             return new PagedResultDto<AuditLogDto>(
