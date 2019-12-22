@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abp.Auditing;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
@@ -25,6 +26,7 @@ namespace Ace.Configuration
             await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettingNames.UiTheme, input.Theme);
         }
 
+        [DisableAuditing]
         public async Task<List<MenuNodeDto>> GetMenuTree(int? parentId)
         {
             return await Task.Run(() =>

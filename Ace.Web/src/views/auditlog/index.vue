@@ -3,30 +3,31 @@
     <el-table
       v-loading="listLoading"
       :data="list"
-      :default-sort = "{prop: 'id', order: 'ascending'}"
+      :default-sort = "{prop: 'executionTime', order: 'descending'}"
       :cell-style="{padding:'0px'}"
       :height="tableHeight"
       element-loading-text="加载中..."
       border
       fit
       highlight-current-row
+      @sort-change="sortChange"
     >
-      <el-table-column align="center" label="ID" sortable="custom" width="100">
+      <el-table-column prop="id" align="center" label="ID" sortable="custom" width="100">
         <template slot-scope="scope">{{ scope.row.id }}</template>
       </el-table-column>
-      <el-table-column label="ServiceName">
+      <el-table-column prop="serviceName" label="ServiceName">
         <template slot-scope="scope">{{ scope.row.serviceName }}</template>
       </el-table-column>
-      <el-table-column label="MethodName">
+      <el-table-column prop="methodName" label="MethodName">
         <template slot-scope="scope">{{ scope.row.methodName }}</template>
       </el-table-column>
-      <el-table-column label="ExecutionTime">
+      <el-table-column prop="executionTime" label="ExecutionTime" sortable="custom" >
         <template slot-scope="scope">{{ scope.row.executionTime }}</template>
       </el-table-column>
-      <el-table-column label="ExecutionDuration">
+      <el-table-column prop="executionDuration" label="ExecutionDuration">
         <template slot-scope="scope">{{ scope.row.executionDuration }}</template>
       </el-table-column>
-      <el-table-column label="Exception" align="center">
+      <el-table-column prop="exception" label="Exception" align="center">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
             <div>{{ scope.row.exception }}</div>
@@ -49,8 +50,8 @@
       :total="totalCount"
       background
       layout="total,sizes,prev,pager,next,jumper"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
+      @size-change="sizeChange"
+      @current-change="currentChange"
     />
   </div>
 </template>
@@ -75,7 +76,9 @@ export default {
       listLoading: true,
       listQuery: {
         pageNumber: 1,
-        pageSize: 10
+        pageSize: 10,
+        sort: [],
+        sorting: 'executionTime desc'
       },
       totalCount: 0,
       tableHeight: window.innerHeight - 155
@@ -85,11 +88,25 @@ export default {
     this.fetchData()
   },
   methods: {
-    handleSizeChange(val) {
+    sortChange(column) {
+      if (column.order) {
+        this.listQuery.sort[column.prop] = column.order
+      } else {
+        delete this.listQuery.sort[column.prop]
+      }
+      var sortString = ''
+      for (var key in this.listQuery.sort) {
+        sortString += key + ' ' + this.listQuery.sort[key] + ','
+      }
+      var reg = /,$/gi
+      this.listQuery.sorting = sortString.replace(reg, '')
+      this.fetchData()
+    },
+    sizeChange(val) {
       this.listQuery.pageSize = val
       this.fetchData()
     },
-    handleCurrentChange(val) {
+    currentChange(val) {
       this.listQuery.pageNumber = val
       this.fetchData()
     },
