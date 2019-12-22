@@ -83,19 +83,15 @@ namespace Ace.Files
         /// <param name="fileName"></param>
         /// <param name="category"></param>
         /// <returns></returns>
-        public async Task<object> DeleteFile(string fileName, string category = "Files")
+        public async Task DeleteFile(string fileName, string category = "Files")
         {
-            return await Task.Run(() =>
+            await Task.Run(() =>
             {
                 var filePath = Path.Combine(_env.ContentRootPath, rootCategory, category, fileName);
                 if (File.Exists(filePath))
                 {
                     File.Delete(filePath);
                 }
-                return new
-                {
-                    fileName
-                };
             });
         }
     }
