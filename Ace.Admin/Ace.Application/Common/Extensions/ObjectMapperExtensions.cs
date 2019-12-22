@@ -8,7 +8,7 @@ namespace Ace.Common.Extensions
 {
     public static class ObjectMapperExtensions
     {
-        public static void MapList<TEntity, TPrimaryKey>(this IObjectMapper objectMapper, IEnumerable<IEntityDto<TPrimaryKey>> dtos, ICollection<TEntity> entities)
+        public static void MapList<TEntity, TPrimaryKey>(this IObjectMapper objectMapper, IEnumerable<IEntityDto<TPrimaryKey>> dtos, ICollection<TEntity> entities, bool executeUpdate = true)
             where TEntity : IEntity<TPrimaryKey>
         {
             var oldArray = entities.Select(s => s.Id).ToArray();
@@ -16,9 +16,12 @@ namespace Ace.Common.Extensions
             var updateArray = oldArray.Intersect(newArray);
             var insertArray = newArray.Except(oldArray);
             var deleteArray = oldArray.Except(newArray);
-            foreach (var id in updateArray)
+            if (executeUpdate)
             {
-                objectMapper.Map(dtos.First(p => p.Id.Equals(id)), entities.First(p => p.Id.Equals(id)));
+                foreach (var id in updateArray)
+                {
+                    objectMapper.Map(dtos.First(p => p.Id.Equals(id)), entities.First(p => p.Id.Equals(id)));
+                }
             }
             foreach (var entity in dtos.Where(p => insertArray.Contains(p.Id)).Select(s => objectMapper.Map<TEntity>(s)))
             {

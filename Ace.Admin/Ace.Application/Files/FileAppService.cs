@@ -6,6 +6,7 @@ using Abp.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Ace.Files
 {
@@ -15,6 +16,7 @@ namespace Ace.Files
     [AbpAuthorize]
     public class FileAppService : ApplicationService
     {
+        private const string rootCategory = "Upload";
         private readonly IHostingEnvironment _env;
 
         public FileAppService(IHostingEnvironment env)
@@ -34,7 +36,7 @@ namespace Ace.Files
         {
             return await Task.Run(() =>
             {
-                var dirPath = Path.Combine(_env.ContentRootPath, "UploadFiles", category);
+                var dirPath = Path.Combine(_env.ContentRootPath, rootCategory, category);
                 if (!Directory.Exists(dirPath))
                     Directory.CreateDirectory(dirPath);
                 var fileName = BitConverter.ToInt64(Guid.NewGuid().ToByteArray()) + Path.GetExtension(file.FileName);
@@ -62,10 +64,33 @@ namespace Ace.Files
         {
             return await Task.Run(() =>
             {
-                var filePath = Path.Combine(_env.ContentRootPath, "UploadFiles", category, fileName);
-                return new FileStreamResult(File.OpenRead(filePath), "application/octet-stream")
+                var contentType = new FileExtensionContentTypeProvider().Mappings[Path.GetExtension(fileName)];
+                var filePath = Path.Combine(_env.ContentRootPath, rootCategory, category, fileName);
+                return new FileStreamResult(File.OpenRead(filePath), contentType)
                 {
                     FileDownloadName = fileName
+                };
+            });
+        }
+
+        /// <summary>
+        /// 删除文件
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="category"></param>
+        /// <returns></returns>
+        public async Task<object> DeleteFile(string fileName, string category = "Files")
+        {
+            return await Task.Run(() =>
+            {
+                var filePath = Path.Combine(_env.ContentRootPath, rootCategory, category, fileName);
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+                return new
+                {
+                    fileName
                 };
             });
         }
