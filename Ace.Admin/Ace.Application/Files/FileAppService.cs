@@ -66,6 +66,10 @@ namespace Ace.Files
             {
                 var contentType = new FileExtensionContentTypeProvider().Mappings[Path.GetExtension(fileName)];
                 var filePath = Path.Combine(_env.ContentRootPath, rootCategory, category, fileName);
+                if (!File.Exists(filePath))
+                {
+                    return new NotFoundResult() as IActionResult;
+                }
                 return new FileStreamResult(File.OpenRead(filePath), contentType)
                 {
                     FileDownloadName = fileName
