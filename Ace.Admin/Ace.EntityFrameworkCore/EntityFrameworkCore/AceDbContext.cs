@@ -5,6 +5,7 @@ using Ace.Authorization.Users;
 using Ace.Menus;
 using Ace.Modules;
 using Ace.MultiTenancy;
+using Ace.UploadFiles;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ace.EntityFrameworkCore
@@ -13,7 +14,8 @@ namespace Ace.EntityFrameworkCore
     {
         /* Define a DbSet for each entity of the application */
         public virtual DbSet<Menu> Menus { get; set; }
-        public virtual DbSet<Module> Departments { get; set; }
+        public virtual DbSet<Module> Modules { get; set; }
+        public virtual DbSet<UploadFile> UploadFiles { get; set; }
 
         public AceDbContext(DbContextOptions<AceDbContext> options)
             : base(options)

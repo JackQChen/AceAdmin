@@ -276,6 +276,24 @@ namespace Ace.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Sys_UploadFiles",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CreationTime = table.Column<DateTime>(nullable: false),
+                    CreatorUserId = table.Column<long>(nullable: true),
+                    DisplayName = table.Column<string>(maxLength: 64, nullable: false),
+                    Category = table.Column<string>(maxLength: 32, nullable: false),
+                    StoreName = table.Column<string>(maxLength: 32, nullable: false),
+                    TenantId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sys_UploadFiles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Sys_UserAccounts",
                 columns: table => new
                 {
@@ -1147,6 +1165,9 @@ namespace Ace.Migrations
 
             migrationBuilder.DropTable(
                 name: "Sys_Tenants");
+
+            migrationBuilder.DropTable(
+                name: "Sys_UploadFiles");
 
             migrationBuilder.DropTable(
                 name: "Sys_UserAccounts");

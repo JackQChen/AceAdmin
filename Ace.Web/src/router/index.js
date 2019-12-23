@@ -60,7 +60,14 @@ export const constantRoutes = [
         name: 'Auditlog',
         component: () => import('@/views/auditlog/index'),
         meta: { title: '审计日志' }
-      }]
+      },
+      {
+        path: 'upload',
+        name: 'Upload',
+        component: () => import('@/views/upload/index'),
+        meta: { title: '文件上传' }
+      }
+    ]
   },
   {
     path: '/example',

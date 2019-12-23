@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Authorization;
+using Ace.Files.Dto;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace Ace.Files
     /// 文件服务
     /// </summary>
     [AbpAuthorize]
-    public class FileAppService : ApplicationService
+    public class FileAppService : ApplicationService, IFileAppService
     {
         private const string rootCategory = "Upload";
         private readonly IHostingEnvironment _env;
@@ -25,14 +26,14 @@ namespace Ace.Files
         }
 
         /// <summary>
-        /// 文件上传
+        /// 上传文件
         /// </summary>
         /// <param name="file"></param>
         /// <param name="category"></param>
         /// <returns></returns>
         [RequestSizeLimit(10_000_000)]
         //[DisableRequestSizeLimit]
-        public async Task<object> UploadFile(IFormFile file, string category = "Files")
+        public async Task<FileDto> Upload(IFormFile file, string category = "Files")
         {
             return await Task.Run(() =>
             {
@@ -46,33 +47,34 @@ namespace Ace.Files
                     file.CopyTo(fs);
                     fs.Flush();
                 }
-                return new
+                return new FileDto
                 {
-                    fileName,
-                    fileSize = file.Length
+                    DisplayName = file.FileName,
+                    StoreName = fileName,
+                    Category = category
                 };
             });
         }
 
         /// <summary>
-        /// 文件下载
+        /// 下载文件
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="storeName"></param>
         /// <param name="category"></param>
         /// <returns></returns>
-        public async Task<IActionResult> DownloadFile(string fileName, string category = "Files")
+        public async Task<IActionResult> Download(string storeName, string category = "Files")
         {
             return await Task.Run(() =>
             {
-                var contentType = new FileExtensionContentTypeProvider().Mappings[Path.GetExtension(fileName)];
-                var filePath = Path.Combine(_env.ContentRootPath, rootCategory, category, fileName);
+                var contentType = new FileExtensionContentTypeProvider().Mappings[Path.GetExtension(storeName)];
+                var filePath = Path.Combine(_env.ContentRootPath, rootCategory, category, storeName);
                 if (!File.Exists(filePath))
                 {
                     return new NotFoundResult() as IActionResult;
                 }
                 return new FileStreamResult(File.OpenRead(filePath), contentType)
                 {
-                    FileDownloadName = fileName
+                    FileDownloadName = storeName
                 };
             });
         }
@@ -80,19 +82,24 @@ namespace Ace.Files
         /// <summary>
         /// 删除文件
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="storeName"></param>
         /// <param name="category"></param>
         /// <returns></returns>
-        public async Task DeleteFile(string fileName, string category = "Files")
+        public async Task<FileDto> Delete(string storeName, string category = "Files")
         {
-            await Task.Run(() =>
-            {
-                var filePath = Path.Combine(_env.ContentRootPath, rootCategory, category, fileName);
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
-            });
+            return await Task.Run(() =>
+             {
+                 var filePath = Path.Combine(_env.ContentRootPath, rootCategory, category, storeName);
+                 if (File.Exists(filePath))
+                 {
+                     File.Delete(filePath);
+                 }
+                 return new FileDto
+                 {
+                     Category = category,
+                     StoreName = storeName
+                 };
+             });
         }
     }
 }

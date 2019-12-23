@@ -1115,6 +1115,34 @@ namespace Ace.Migrations
                     b.ToTable("Sys_Tenants");
                 });
 
+            modelBuilder.Entity("Ace.UploadFiles.UploadFile", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(32);
+
+                    b.Property<DateTime>("CreationTime");
+
+                    b.Property<long?>("CreatorUserId");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(64);
+
+                    b.Property<string>("StoreName")
+                        .IsRequired()
+                        .HasMaxLength(32);
+
+                    b.Property<int?>("TenantId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sys_UploadFiles");
+                });
+
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>
                 {
                     b.HasBaseType("Abp.Application.Features.FeatureSetting");
