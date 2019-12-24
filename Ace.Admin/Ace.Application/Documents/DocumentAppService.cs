@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Drawing;
+using System.IO;
+using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
@@ -52,6 +54,19 @@ namespace Ace.Documents
         {
             var doc = await Get(input);
             return await _fileAppService.Download(doc.StorageName, doc.OriginalName, doc.Category);
+        }
+
+        [HttpGet]
+        [Route("api/services/app/[controller]/[action]")]
+        public async Task<IActionResult> PreviewImage(EntityDto<long> input, int width)
+        {
+            var streamResult = await GetDocument(input) as FileStreamResult;
+            var img = Image.FromStream(streamResult.FileStream);
+            var ms = new MemoryStream();
+            img.Save(ms, img.RawFormat);
+            var bytes = ms.GetBuffer();
+            ms.Close();
+            return new FileContentResult(bytes, streamResult.ContentType);
         }
 
         /// <summary>
