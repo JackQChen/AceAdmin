@@ -66,7 +66,7 @@ namespace Ace.Documents
             img.Save(ms, img.RawFormat);
             var bytes = ms.GetBuffer();
             ms.Close();
-            return new FileContentResult(bytes, streamResult.ContentType);
+            return new FileContentResult(bytes, streamResult.ContentType) { FileDownloadName = streamResult.FileDownloadName };
         }
 
         /// <summary>
