@@ -2,10 +2,10 @@
 using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
 
-namespace Ace.UploadFiles.Dto
+namespace Ace.Documents.Dto
 {
-    [AutoMap(typeof(UploadFile))]
-    public class UploadFileDto : EntityDto<long>
+    [AutoMap(typeof(Document))]
+    public class DocumentDto : EntityDto<long>
     {
         [Required]
         [MaxLength(64)]
@@ -17,6 +17,6 @@ namespace Ace.UploadFiles.Dto
 
         [Required]
         [MaxLength(32)]
-        public string StoreName { get; set; }
+        public string StorageName { get; set; }
     }
 }

@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 
-namespace Ace.UploadFiles
+namespace Ace.Documents
 {
-    [Table("Sys_UploadFiles")]
-    public class UploadFile : CreationAuditedEntity<long>, IMayHaveTenant
+    [Table("Sys_Document")]
+    public class Document : CreationAuditedEntity<long>, IMayHaveTenant
     {
 
         [Required]
@@ -19,7 +19,7 @@ namespace Ace.UploadFiles
 
         [Required]
         [MaxLength(32)]
-        public string StoreName { get; set; }
+        public string StorageName { get; set; }
 
         public int? TenantId { get; set; }
     }

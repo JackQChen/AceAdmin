@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
-export function getList(data) {
+export function getList(params) {
   return request({
     url: 'UploadFile/GetAll',
-    method: 'post',
-    data
+    method: 'get',
+    params
   })
 }

@@ -14,6 +14,7 @@
 </template>
 <script>
 import { getToken } from '@/utils/auth'
+import { getList } from '@/api/upload'
 export default {
   data() {
     return {
@@ -21,15 +22,20 @@ export default {
       headers: {
         'Authorization': 'Bearer ' + getToken()
       },
-      fileList: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }]
+      fileList: null
     }
+  },
+  created() {
+    this.fetchData()
   },
   methods: {
     handleRemove(file, fileList) {
       console.log('remove', file, fileList)
     },
-    handlePreview(file) {
-      console.log(file)
+    fetchData() {
+      getList({ 'pagedType': 1 }).then(data => {
+        this.fileList = data.items
+      })
     }
   }
 }

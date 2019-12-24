@@ -4,7 +4,7 @@
     {
         public string DisplayName { get; set; }
 
-        public string StoreName { get; set; }
+        public string StorageName { get; set; }
 
         public string Category { get; set; }
     }
