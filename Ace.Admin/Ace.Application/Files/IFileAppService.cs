@@ -15,15 +15,16 @@ namespace Ace.Files
         /// <param name="storageName"></param>
         /// <param name="category"></param>
         /// <returns></returns>
-        Task<FileDto> Upload(IFormFile file, string storageName, string category);
+        Task<FileDto> Upload(IFormFile file, string storageName = "", string category = "Files");
 
         /// <summary>
         /// 下载文件
         /// </summary>
         /// <param name="storageName"></param>
+        /// <param name="downloadName"></param>
         /// <param name="category"></param>
         /// <returns></returns>
-        Task<IActionResult> Download(string storageName, string category);
+        Task<IActionResult> Download(string storageName, string downloadName = "", string category = "Files");
 
         /// <summary>
         /// 删除文件

@@ -34,11 +34,11 @@ namespace Ace.Documents
         /// <returns></returns>
         public async Task<DocumentDto> CreateDocument(IFormFile file, string category = "Files")
         {
-            var fileDto = await _fileAppService.Upload(file, string.Empty, category);
+            var fileDto = await _fileAppService.Upload(file, category: category);
             return await Create(new DocumentDto
             {
                 Category = fileDto.Category,
-                DisplayName = fileDto.DisplayName,
+                OriginalName = fileDto.OriginalName,
                 StorageName = fileDto.StorageName
             });
         }
@@ -51,7 +51,7 @@ namespace Ace.Documents
         public async Task<IActionResult> GetDocument(EntityDto<long> input)
         {
             var doc = await Get(input);
-            return await _fileAppService.Download(doc.StorageName, doc.Category);
+            return await _fileAppService.Download(doc.StorageName, doc.OriginalName, doc.Category);
         }
 
         /// <summary>

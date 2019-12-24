@@ -11,7 +11,7 @@ namespace Ace.Documents
 
         [Required]
         [MaxLength(64)]
-        public string DisplayName { get; set; }
+        public string OriginalName { get; set; }
 
         [Required]
         [MaxLength(32)]

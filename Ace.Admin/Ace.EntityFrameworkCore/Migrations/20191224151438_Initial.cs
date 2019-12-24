@@ -64,7 +64,7 @@ namespace Ace.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CreationTime = table.Column<DateTime>(nullable: false),
                     CreatorUserId = table.Column<long>(nullable: true),
-                    DisplayName = table.Column<string>(maxLength: 64, nullable: false),
+                    OriginalName = table.Column<string>(maxLength: 64, nullable: false),
                     Category = table.Column<string>(maxLength: 32, nullable: false),
                     StorageName = table.Column<string>(maxLength: 32, nullable: false),
                     TenantId = table.Column<int>(nullable: true)

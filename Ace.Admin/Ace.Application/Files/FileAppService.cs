@@ -35,7 +35,7 @@ namespace Ace.Files
         /// <returns></returns>
         [RequestSizeLimit(10_000_000)]
         //[DisableRequestSizeLimit]
-        public async Task<FileDto> Upload(IFormFile file, string storageName, string category = "Files")
+        public async Task<FileDto> Upload(IFormFile file, string storageName = "", string category = "Files")
         {
             return await Task.Run(() =>
             {
@@ -55,7 +55,7 @@ namespace Ace.Files
                 }
                 return new FileDto
                 {
-                    DisplayName = file.FileName,
+                    OriginalName = file.FileName,
                     StorageName = fileName,
                     Category = category
                 };
@@ -66,9 +66,10 @@ namespace Ace.Files
         /// 下载文件
         /// </summary>
         /// <param name="storageName"></param>
+        /// <param name="downloadName"></param>
         /// <param name="category"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Download(string storageName, string category = "Files")
+        public async Task<IActionResult> Download(string storageName, string downloadName = "", string category = "Files")
         {
             return await Task.Run(() =>
             {
@@ -80,7 +81,7 @@ namespace Ace.Files
                 }
                 return new FileStreamResult(File.OpenRead(filePath), contentType)
                 {
-                    FileDownloadName = storageName
+                    FileDownloadName = downloadName.IsNullOrWhiteSpace() ? storageName : downloadName
                 };
             });
         }

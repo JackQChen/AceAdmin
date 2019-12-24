@@ -1003,7 +1003,7 @@ namespace Ace.Migrations
 
                     b.Property<long?>("CreatorUserId");
 
-                    b.Property<string>("DisplayName")
+                    b.Property<string>("OriginalName")
                         .IsRequired()
                         .HasMaxLength(64);
 

@@ -5,11 +5,11 @@ using Abp.AutoMapper;
 namespace Ace.Documents.Dto
 {
     [AutoMap(typeof(Document))]
-    public class DocumentDto : EntityDto<long>
+    public class DocumentDto : CreationAuditedEntityDto<long>
     {
         [Required]
         [MaxLength(64)]
-        public string DisplayName { get; set; }
+        public string OriginalName { get; set; }
 
         [Required]
         [MaxLength(32)]

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getList(params) {
   return request({
-    url: 'UploadFile/GetAll',
+    url: 'Document/GetAll',
     method: 'get',
     params
   })

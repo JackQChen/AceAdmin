@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ace.Migrations
 {
     [DbContext(typeof(AceDbContext))]
-    [Migration("20191224134524_Initial")]
+    [Migration("20191224151438_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1005,7 +1005,7 @@ namespace Ace.Migrations
 
                     b.Property<long?>("CreatorUserId");
 
-                    b.Property<string>("DisplayName")
+                    b.Property<string>("OriginalName")
                         .IsRequired()
                         .HasMaxLength(64);
 
