@@ -28,15 +28,19 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data
-    if (res.success) {
-      return res.result
+    if (response.headers['content-type'].indexOf('json') >= 0) {
+      if (res.success) {
+        return res.result
+      } else {
+        Message({
+          message: res.error.details,
+          type: 'error',
+          duration: 5 * 1000
+        })
+        return Promise.reject('error')
+      }
     } else {
-      Message({
-        message: res.error.details,
-        type: 'error',
-        duration: 5 * 1000
-      })
-      return Promise.reject('error')
+      return window.URL.createObjectURL(new Blob([res]))
     }
   },
   error => {

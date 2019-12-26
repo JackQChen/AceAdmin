@@ -7,3 +7,12 @@ export function getList(params) {
     params
   })
 }
+
+export function getDocument(params) {
+  return request({
+    url: 'Document/GetDocument',
+    method: 'get',
+    responseType: 'blob',
+    params
+  })
+}

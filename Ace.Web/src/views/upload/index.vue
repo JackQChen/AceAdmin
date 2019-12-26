@@ -17,9 +17,13 @@
           <template slot-scope="scope">
             <el-image
               :alt="scope.row.id"
+              :src="scope.row.url"
               fit="scale-down"
-              src="https://img-blog.csdnimg.cn/2019122522221147.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2pjbGlhbjkx,size_16,color_FFFFFF,t_70"
-            />
+            >
+              <div slot="error">
+                <i class="el-icon-picture-outline"/>
+              </div>
+            </el-image>
           </template>
         </el-table-column>
         <el-table-column label="文件名">
@@ -55,7 +59,7 @@
   </div>
 </template>
 <script>
-import { getList } from '@/api/upload'
+import { getList, getDocument } from '@/api/upload'
 export default {
   data() {
     return {
@@ -76,10 +80,20 @@ export default {
       this.$refs.multipleTable.clearSelection()
       this.$refs.multipleTable.toggleRowSelection(row, true)
     },
+    createUrl(obj, index) {
+      getDocument({ id: obj.id }).then(url => {
+        obj.url = url
+        this.$set(this.dataList, index, obj)
+      })
+    },
     fetchData() {
       this.isLoading = true
       getList(this.listQuery).then(data => {
+        const that = this
         this.dataList = data.items
+        this.dataList.forEach(function(obj, index) {
+          that.createUrl(obj, index)
+        })
         this.isLoading = false
       })
     },
