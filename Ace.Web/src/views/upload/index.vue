@@ -1,7 +1,11 @@
 <template>
   <div class="app-container">
-    <input type="file" accept="image/png,image/gif,image/jpeg" @change="upload">
+    <input type="file" accept="image/png,image/gif,image/jpeg,image/bmp" @change="uploadFile">
     <div>
+      <el-image-viewer
+        v-if="isShowPreview"
+        :on-close="closePreview"
+        :url-list="previewList" />
       <el-table
         v-loading="isLoading"
         ref="multipleTable"
@@ -16,9 +20,10 @@
         <el-table-column align="center" label="" width="100">
           <template slot-scope="scope">
             <el-image
-              :alt="scope.row.id"
               :src="scope.row.url"
+              style="width: 50px; height: 50px"
               fit="scale-down"
+              @click="handlePreview(scope.$index)"
             >
               <div slot="error">
                 <i class="el-icon-picture-outline"/>
@@ -36,40 +41,35 @@
         </el-table-column>
         <el-table-column label="创建时间" width="200">
           <template slot-scope="scope">{{ scope.row.creationTime }}</template>
-        </el-table-column> <el-table-column label="操作">
+        </el-table-column>
+        <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button @click="handlePreview(scope.row.id)">预览</el-button>
-            <el-button @click="handleDownload(scope.$index, scope.row)">下载</el-button>
-            <el-button type="danger" @click="handleRemove(scope.$index, scope.row)">删除</el-button>
+            <el-button @click="handlePreview(scope.$index)">预览</el-button>
+            <a :href="scope.row.url" :download="scope.row.originalName" >
+              <el-button>下载</el-button>
+            </a>
+            <el-button type="danger" @click="handleRemove(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <!-- Form -->
-    <el-dialog :visible.sync="isFormShow" title="图片预览">
-      <el-image
-        fit="fill"
-        src="https://img-blog.csdnimg.cn/2019122522221147.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2pjbGlhbjkx,size_16,color_FFFFFF,t_70"
-      />
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="isFormShow = false">确 定</el-button>
-        <el-button @click="isFormShow = false">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
-import { getList, getDocument } from '@/api/upload'
+import ElImageViewer from 'element-ui/packages/image/src/image-viewer'
+import { getList, createDocument, getDocument, deleteDocument } from '@/api/upload'
 export default {
+  components: { ElImageViewer },
   data() {
     return {
       tableHeight: window.innerHeight - 155,
       isLoading: true,
       dataList: null,
+      previewList: [],
       listQuery: {
         pagedType: 1
       },
-      isFormShow: false
+      isShowPreview: false
     }
   },
   created() {
@@ -97,27 +97,32 @@ export default {
         this.isLoading = false
       })
     },
-    upload(e) {
+    uploadFile(e) {
+      this.isLoading = true
       const file = e.target.files[0]
-      const param = new FormData() // 创建form对象
-      param.append('file', file)// 通过append向form对象添加数据
-      console.log(param.get('file')) // FormData私有类对象，访问不到，可以通过get判断值是否传进去
-      const config = {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      } // 添加请求头
-      this.$http.post('http://127.0.0.1:8081/upload', param, config)
-        .then(response => {
-          console.log(response.data)
-        })
+      const param = new FormData()
+      param.append('file', file)
+      createDocument(param).then(data => {
+        e.target.value = ''
+        this.fetchData()
+      })
     },
-    handlePreview(file) {
-      this.isFormShow = true
+    closePreview() {
+      this.isShowPreview = false
     },
-    handleDownload(file) {
-      console.log(file)
+    handlePreview(index) {
+      this.previewList.length = 0
+      for (let i = 0; i < this.dataList.length; i++) {
+        const d = this.dataList.length - index
+        this.previewList.push(this.dataList[ i < d ? index + i : i - d ].url)
+      }
+      this.isShowPreview = true
     },
-    handleRemove(file, fileList) {
-      console.log('remove', file, fileList)
+    handleRemove(id) {
+      this.isLoading = true
+      deleteDocument({ id }).then(data => {
+        this.fetchData()
+      })
     }
   }
 }

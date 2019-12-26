@@ -8,11 +8,27 @@ export function getList(params) {
   })
 }
 
+export function createDocument(data) {
+  return request({
+    url: 'Document/CreateDocument',
+    method: 'post',
+    data
+  })
+}
+
 export function getDocument(params) {
   return request({
     url: 'Document/GetDocument',
     method: 'get',
     responseType: 'blob',
+    params
+  })
+}
+
+export function deleteDocument(params) {
+  return request({
+    url: 'Document/DeleteDocument',
+    method: 'delete',
     params
   })
 }
