@@ -57,8 +57,7 @@ namespace Ace.Documents
         }
 
         [HttpGet]
-        [Route("api/services/app/[controller]/[action]")]
-        public async Task<IActionResult> PreviewImage(EntityDto<long> input, int width)
+        public async Task<IActionResult> GetThumbnail(EntityDto<long> input, int width)
         {
             var streamResult = await GetDocument(input) as FileStreamResult;
             var img = Image.FromStream(streamResult.FileStream);
