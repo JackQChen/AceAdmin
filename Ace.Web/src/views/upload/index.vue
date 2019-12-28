@@ -21,7 +21,7 @@
           <template slot-scope="scope">
             <el-image
               :src="scope.row.url"
-              style="width: 50px; height: 50px"
+              style="width:50px;height:50px;cursor:pointer"
               fit="scale-down"
               @click="handlePreview(scope.$index)"
             >
