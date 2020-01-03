@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Abp.Application.Services;
+using Abp.Auditing;
 using Abp.Authorization;
 using Abp.Extensions;
 using Ace.Files.Dto;
@@ -16,6 +17,7 @@ namespace Ace.Files
     /// 文件服务
     /// </summary>
     [AbpAuthorize]
+    [DisableAuditing]
     public class FileAppService : ApplicationService, IFileAppService
     {
         private const string rootCategory = "Upload";

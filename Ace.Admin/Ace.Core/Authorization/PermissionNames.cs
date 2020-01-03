@@ -2,7 +2,7 @@
 {
     public static class PermissionNames
     {
-        public const string Admin_AuditLog = nameof(Admin_AuditLog);
+        public const string Admin_AuditLogs = nameof(Admin_AuditLogs);
         public const string Admin_Tenants = nameof(Admin_Tenants);
         public const string Admin_Roles = nameof(Admin_Roles);
         public const string Admin_Users = nameof(Admin_Users);

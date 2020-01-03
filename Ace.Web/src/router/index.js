@@ -62,6 +62,12 @@ export const constantRoutes = [
         meta: { title: '审计日志' }
       },
       {
+        path: 'menu',
+        name: 'Menu',
+        component: () => import('@/views/menu/index'),
+        meta: { title: '菜单管理' }
+      },
+      {
         path: 'upload',
         name: 'Upload',
         component: () => import('@/views/upload/index'),

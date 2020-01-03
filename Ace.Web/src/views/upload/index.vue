@@ -1,6 +1,9 @@
 <template>
   <div class="app-container">
-    <input type="file" accept="image/png,image/gif,image/jpeg,image/bmp" @change="uploadFile">
+    <el-button type="primary" class="upload">
+      <input type="file" accept="image/*" @change="uploadFile">
+      <div>上传文件</div>
+    </el-button>
     <div>
       <el-image-viewer
         v-if="isShowPreview"
@@ -127,3 +130,19 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.upload{
+  width: 90px;
+  height: 40px;
+  padding: 0px;
+  input{
+  width: 100%;
+  height:100%;
+  opacity: 0;
+  }
+  div{
+    margin-top: -25px;
+    padding-bottom: 20px;
+  }
+}
+</style>

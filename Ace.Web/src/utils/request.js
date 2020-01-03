@@ -33,7 +33,7 @@ service.interceptors.response.use(
         return res.result
       } else {
         Message({
-          message: res.error.details,
+          message: res.error.message ? res.error.message : res.error.details,
           type: 'error',
           duration: 5 * 1000
         })

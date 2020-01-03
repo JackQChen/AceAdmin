@@ -18,7 +18,7 @@ namespace Ace.AuditLogs
     /// 审计日志
     /// </summary>
     [DisableAuditing]
-    [AbpAuthorize(PermissionNames.Admin_AuditLog)]
+    [AbpAuthorize(PermissionNames.Admin_AuditLogs)]
     public class AuditLogAppService : ApplicationService
     {
         IRepository<AuditLog, long> _repository;
