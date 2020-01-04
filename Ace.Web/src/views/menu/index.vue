@@ -106,7 +106,7 @@ export default {
     },
     getTreeData(data) {
       for (var i = 0; i < data.length; i++) {
-        if (data[i].children.length == 0) {
+        if (data[i].children.length === 0) {
           data[i].children = null
         } else {
           this.getTreeData(data[i].children)
