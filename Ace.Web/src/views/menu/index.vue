@@ -1,65 +1,72 @@
 <template>
-  <div>
-    <el-table
-      v-loading="listLoading"
-      :data="list"
-      :default-sort = "{prop: 'executionTime', order: 'descending'}"
-      :cell-style="{padding:'0px'}"
-      :height="tableHeight"
-      element-loading-text="加载中..."
-      border
-      fit
-      highlight-current-row
-      @sort-change="sortChange"
-    >
-      <el-table-column prop="id" align="center" label="ID" sortable="custom" width="100">
-        <template slot-scope="scope">{{ scope.row.id }}</template>
-      </el-table-column>
-      <el-table-column prop="serviceName" label="ServiceName">
-        <template slot-scope="scope">{{ scope.row.serviceName }}</template>
-      </el-table-column>
-      <el-table-column prop="methodName" label="MethodName">
-        <template slot-scope="scope">{{ scope.row.methodName }}</template>
-      </el-table-column>
-      <el-table-column prop="executionTime" label="ExecutionTime" sortable="custom" >
-        <template slot-scope="scope">{{ scope.row.executionTime }}</template>
-      </el-table-column>
-      <el-table-column prop="executionDuration" label="ExecutionDuration">
-        <template slot-scope="scope">{{ scope.row.executionDuration }}</template>
-      </el-table-column>
-      <el-table-column prop="exception" label="Exception" align="center">
-        <template slot-scope="scope">
-          <el-popover trigger="hover" placement="top">
-            <div>{{ scope.row.exception }}</div>
-            <div slot="reference" class="name-wrapper">
-              <el-tag size="medium">{{ scope.row.exception }}</el-tag>
-            </div>
-          </el-popover>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" width="200">
-        <template slot-scope="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-      :page-sizes="[10,20,50]"
-      :page-size="listQuery.pageSize"
-      :total="totalCount"
-      background
-      layout="total,sizes,prev,pager,next,jumper"
-      @size-change="sizeChange"
-      @current-change="currentChange"
-    />
-  </div>
+  <split-pane :min-percent="20" :default-percent="30" split="vertical">
+    <template slot="paneL">
+      A
+    </template>
+    <template slot="paneR">
+      <el-table
+        v-loading="listLoading"
+        :data="list"
+        :default-sort = "{prop: 'executionTime', order: 'descending'}"
+        :cell-style="{padding:'0px'}"
+        :height="tableHeight"
+        element-loading-text="加载中..."
+        border
+        fit
+        highlight-current-row
+        @sort-change="sortChange"
+      >
+        <el-table-column prop="id" align="center" label="ID" sortable="custom" width="100">
+          <template slot-scope="scope">{{ scope.row.id }}</template>
+        </el-table-column>
+        <el-table-column prop="serviceName" label="ServiceName">
+          <template slot-scope="scope">{{ scope.row.serviceName }}</template>
+        </el-table-column>
+        <el-table-column prop="methodName" label="MethodName">
+          <template slot-scope="scope">{{ scope.row.methodName }}</template>
+        </el-table-column>
+        <el-table-column prop="executionTime" label="ExecutionTime" sortable="custom" >
+          <template slot-scope="scope">{{ scope.row.executionTime }}</template>
+        </el-table-column>
+        <el-table-column prop="executionDuration" label="ExecutionDuration">
+          <template slot-scope="scope">{{ scope.row.executionDuration }}</template>
+        </el-table-column>
+        <el-table-column prop="exception" label="Exception" align="center">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="top">
+              <div>{{ scope.row.exception }}</div>
+              <div slot="reference" class="name-wrapper">
+                <el-tag size="medium">{{ scope.row.exception }}</el-tag>
+              </div>
+            </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="created_at" label="Display_time" width="200">
+          <template slot-scope="scope">
+            <i class="el-icon-time" />
+            <span>{{ scope.row.display_time }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        :page-sizes="[10,20,50]"
+        :page-size="listQuery.pageSize"
+        :total="totalCount"
+        background
+        layout="total,sizes,prev,pager,next,jumper"
+        @size-change="sizeChange"
+        @current-change="currentChange"
+      />
+    </template>
+  </split-pane>
 </template>
 
 <script>
+import SplitPane from 'vue-splitpane'
 import { getList } from '@/api/auditlog'
 
 export default {
+  components: { SplitPane },
   filters: {
     statusFilter(status) {
       const statusMap = {
