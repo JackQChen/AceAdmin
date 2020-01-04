@@ -1,136 +1,103 @@
 <template>
   <split-pane :min-percent="20" :default-percent="30" split="vertical">
     <template slot="paneL">
-      A
+      <el-card class="box-card">
+        <div slot="header">
+          <span>菜单结构</span>
+        </div>
+        <div class="fill">
+          <el-tree
+            v-loading="loading"
+            :data="menuTree"
+            :props="defaultProps"
+            default-expand-all
+            @node-click="handleNodeClick">
+            <span slot-scope="{ data }" class="custom-tree-node">
+              <svg-icon :icon-class="data.icon?data.icon:'menu'" />
+              <span>{{ data.name }}</span>
+            </span>
+          </el-tree>
+        </div>
+      </el-card>
     </template>
     <template slot="paneR">
-      <el-table
-        v-loading="listLoading"
-        :data="list"
-        :default-sort = "{prop: 'executionTime', order: 'descending'}"
-        :cell-style="{padding:'0px'}"
-        :height="tableHeight"
-        element-loading-text="加载中..."
-        border
-        fit
-        highlight-current-row
-        @sort-change="sortChange"
-      >
-        <el-table-column prop="id" align="center" label="ID" sortable="custom" width="100">
-          <template slot-scope="scope">{{ scope.row.id }}</template>
-        </el-table-column>
-        <el-table-column prop="serviceName" label="ServiceName">
-          <template slot-scope="scope">{{ scope.row.serviceName }}</template>
-        </el-table-column>
-        <el-table-column prop="methodName" label="MethodName">
-          <template slot-scope="scope">{{ scope.row.methodName }}</template>
-        </el-table-column>
-        <el-table-column prop="executionTime" label="ExecutionTime" sortable="custom" >
-          <template slot-scope="scope">{{ scope.row.executionTime }}</template>
-        </el-table-column>
-        <el-table-column prop="executionDuration" label="ExecutionDuration">
-          <template slot-scope="scope">{{ scope.row.executionDuration }}</template>
-        </el-table-column>
-        <el-table-column prop="exception" label="Exception" align="center">
-          <template slot-scope="scope">
-            <el-popover trigger="hover" placement="top">
-              <div>{{ scope.row.exception }}</div>
-              <div slot="reference" class="name-wrapper">
-                <el-tag size="medium">{{ scope.row.exception }}</el-tag>
-              </div>
-            </el-popover>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" prop="created_at" label="Display_time" width="200">
-          <template slot-scope="scope">
-            <i class="el-icon-time" />
-            <span>{{ scope.row.display_time }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        :page-sizes="[10,20,50]"
-        :page-size="listQuery.pageSize"
-        :total="totalCount"
-        background
-        layout="total,sizes,prev,pager,next,jumper"
-        @size-change="sizeChange"
-        @current-change="currentChange"
-      />
+      <el-card class="box-card">
+        <div slot="header">
+          <span>菜单信息</span>
+        </div>
+        <el-form ref="form" :model="menu" label-width="100px" style="width:500px">
+          <el-form-item label="菜单名称">
+            <el-input v-model="menu.name"/>
+          </el-form-item>
+          <el-form-item label="上级菜单">
+            <el-input v-model="menu.parentId"/>
+          </el-form-item>
+          <el-form-item label="图标">
+            <el-input v-model="menu.icon">
+              <template slot="prepend"><svg-icon :icon-class="menu.icon?menu.icon:'menu'" /></template>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="排序">
+            <el-input v-model="menu.order"/>
+          </el-form-item>
+          <el-form-item label="启用">
+            <el-switch v-model="menu.isActive"/>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary">保存</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
     </template>
   </split-pane>
 </template>
 
 <script>
 import SplitPane from 'vue-splitpane'
-import { getList } from '@/api/auditlog'
+import { getMenuTree } from '@/api/menu'
 
 export default {
   components: { SplitPane },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
   data() {
     return {
-      list: null,
-      listLoading: true,
-      listQuery: {
-        pageNumber: 1,
-        pageSize: 10,
-        sort: [],
-        sorting: 'executionTime desc'
-      },
-      totalCount: 0,
-      tableHeight: window.innerHeight - 155
+      loading: true,
+      menuTree: [],
+      menu: {},
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      }
     }
   },
   created() {
     this.fetchData()
   },
   methods: {
-    sortChange(column) {
-      if (column.order) {
-        this.listQuery.sort[column.prop] = column.order
-      } else {
-        delete this.listQuery.sort[column.prop]
-      }
-      var sortString = ''
-      for (var key in this.listQuery.sort) {
-        sortString += key + ' ' + this.listQuery.sort[key] + ','
-      }
-      var reg = /,$/gi
-      this.listQuery.sorting = sortString.replace(reg, '')
-      this.fetchData()
-    },
-    sizeChange(val) {
-      this.listQuery.pageSize = val
-      this.fetchData()
-    },
-    currentChange(val) {
-      this.listQuery.pageNumber = val
-      this.fetchData()
-    },
     fetchData() {
-      this.listLoading = true
-      getList(this.listQuery).then(data => {
-        this.list = data.items
-        this.totalCount = data.totalCount
-        this.listLoading = false
+      getMenuTree(this.listQuery).then(data => {
+        this.menuTree = data
+        this.loading = false
       })
+    },
+    handleNodeClick(data) {
+      this.menu = data
     }
   }
 }
 </script>
-
-<style scoped>
-.el-pagination{
-  padding:20px 40px
+<style>
+.el-tree-node__content
+{
+  height: 36px;
+}
+</style>
+<style lang="scss" scoped>
+.fill
+{
+  margin: -20px;
+}
+.el-card
+{
+  height: 100%;
 }
 </style>

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
@@ -7,6 +9,7 @@ using Abp.Linq.Extensions;
 using Ace.Authorization;
 using Ace.Common.Dto;
 using Ace.Menus.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ace.Menus
 {
@@ -31,6 +34,15 @@ namespace Ace.Menus
                 .WhereIf(input.StartTime.HasValue, x => x.CreationTime > input.StartTime)
                 .WhereIf(input.EndTime.HasValue, x => x.CreationTime < input.EndTime)
                 ;
+        }
+
+        public async Task<List<MenuDto>> GetMenuTree(int? parentId)
+        {
+            var menuList = await Repository.GetAll().ToListAsync();
+            return menuList
+                .Where(p => p.ParentId == parentId)
+                .OrderBy(k => k.Order)
+                .Select(s => ObjectMapper.Map<MenuDto>(s)).ToList();
         }
 
     }

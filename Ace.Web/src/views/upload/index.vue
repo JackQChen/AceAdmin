@@ -4,6 +4,7 @@
       <input type="file" accept="image/*" @change="uploadFile">
       <div>上传文件</div>
     </el-button>
+    <el-divider/>
     <div>
       <el-image-viewer
         v-if="isShowPreview"

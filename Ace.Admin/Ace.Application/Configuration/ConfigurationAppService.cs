@@ -9,6 +9,7 @@ using Abp.Runtime.Session;
 using Ace.Configuration.Dto;
 using Ace.Menus;
 using Ace.Menus.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ace.Configuration
 {
@@ -29,15 +30,15 @@ namespace Ace.Configuration
         [DisableAuditing]
         public async Task<List<MenuNodeDto>> GetMenuTree(int? parentId)
         {
-            return await Task.Run(() =>
-           {
-               var menuList = _menuRepository.GetAllIncluding(p => p.Module).ToList();
-               var menuDtoList = menuList.Where(p => p.ParentId == parentId).Select(s => ObjectMapper.Map<MenuDto>(s)).ToList();
-               SetGrantedCount(menuDtoList);
-               var nodeList = new List<MenuNodeDto>();
-               BuildMenuTree(menuDtoList, nodeList);
-               return nodeList;
-           });
+            var menuList = await _menuRepository.GetAllIncluding(p => p.Module).ToListAsync();
+            var menuDtoList = menuList
+                .Where(p => p.ParentId == parentId)
+                .OrderBy(k => k.Order)
+                .Select(s => ObjectMapper.Map<MenuDto>(s)).ToList();
+            SetGrantedCount(menuDtoList);
+            var nodeList = new List<MenuNodeDto>();
+            BuildMenuTree(menuDtoList, nodeList);
+            return nodeList;
         }
 
         private void SetGrantedCount(List<MenuDto> menuDtoList)
