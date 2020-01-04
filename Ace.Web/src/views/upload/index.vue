@@ -1,9 +1,11 @@
 <template>
-  <div class="app-container">
-    <el-button type="primary" class="upload">
-      <input type="file" accept="image/*" @change="uploadFile">
-      <div>上传文件</div>
-    </el-button>
+  <div>
+    <div style="padding:10px 30px 0 30px">
+      <el-button type="primary" class="upload">
+        <input type="file" accept="image/*" @change="uploadFile">
+        <div>上传文件</div>
+      </el-button>
+    </div>
     <el-divider/>
     <div>
       <el-image-viewer
@@ -66,7 +68,7 @@ export default {
   components: { ElImageViewer },
   data() {
     return {
-      tableHeight: window.innerHeight - 155,
+      tableHeight: window.innerHeight - 190,
       isLoading: true,
       dataList: null,
       previewList: [],
