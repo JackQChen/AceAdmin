@@ -75,7 +75,6 @@
     </template>
   </split-pane>
 </template>
-
 <script>
 import SplitPane from 'vue-splitpane'
 import { getMenuTree } from '@/api/menu'
@@ -126,8 +125,8 @@ export default {
 {
   height: 36px;
 }
-.el-cascader-menu__hover-zone path{
-    fill:transparent !important;
+.el-cascader-menu__hover-zone {
+    display: none;
 }
 </style>
 <style lang="scss" scoped>
