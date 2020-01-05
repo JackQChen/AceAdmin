@@ -30,7 +30,11 @@
         <div slot="header">
           <span>菜单信息</span>
         </div>
-        <el-form ref="form" :model="menu" label-width="100px" style="width:500px">
+        <el-form
+          v-loading="loading"
+          :model="menu"
+          label-width="100px"
+          style="width:500px">
           <el-form-item label="菜单ID">
             <el-input v-model="menu.id" :disabled="true"/>
           </el-form-item>
@@ -85,11 +89,10 @@
 </template>
 <script>
 import SplitPane from 'vue-splitpane'
-import Message from 'element-ui'
 import { getMenuTree, createMenu, updateMenu, deleteMenu } from '@/api/menu'
 
 export default {
-  components: { SplitPane, Message },
+  components: { SplitPane },
   data() {
     return {
       loading: true,
@@ -138,24 +141,59 @@ export default {
         this.getParentPath(path, node.parent)
       }
     },
-    parentChange() {
-      this.menu.parentId = this.parentPath[this.parentPath.length - 1]
+    parentChange(val) {
+      this.menu.parentId = val[val.length - 1]
       this.$refs.parentMenu.toggleDropDownVisible()
     },
-    addMenu() {},
+    addMenu() {
+      const pId = this.menu.id
+      const path = this.parentPath.concat()
+      path.push(pId)
+      this.parentPath = path
+      this.menu = {
+        parentId: pId,
+        order: 0,
+        isActive: true
+      }
+    },
     removeMenu() {
-      deleteMenu()
+      if (!this.menu.id) { return }
+      this.$confirm('确定删除该菜单吗？', {
+        type: 'warning',
+        title: '提示'
+      }).then(() => {
+        this.loading = true
+        deleteMenu({ id: this.menu.id }).then(() => {
+          this.fetchData()
+          this.$message({
+            message: '菜单删除成功',
+            type: 'success'
+          })
+        }).catch(() => {
+          this.loading = false
+        })
+        this.addMenu()
+      }).catch(() => {
+      })
     },
     save() {
-      if (this.menu.id) {
-        updateMenu(this.menu).then(data => {
-          Message({
-            message: 'done'
-          })
-        })
+      this.loading = true
+      let p = null
+      const m = Object.assign({}, this.menu, { children: [] })
+      if (m.id) {
+        p = updateMenu(m)
       } else {
-        createMenu(this.menu)
+        p = createMenu(m)
       }
+      p.then(() => {
+        this.fetchData()
+        this.$message({
+          message: '菜单保存成功',
+          type: 'success'
+        })
+      }).catch(() => {
+        this.loading = false
+      })
     }
   }
 }
