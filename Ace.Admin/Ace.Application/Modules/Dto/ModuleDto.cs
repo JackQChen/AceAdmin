@@ -17,10 +17,6 @@ namespace Ace.Modules.Dto
 
         [Required]
         [MaxLength(128)]
-        public string Component { get; set; }
-
-        [Required]
-        [MaxLength(128)]
         public string PermissionName { get; set; }
 
     }

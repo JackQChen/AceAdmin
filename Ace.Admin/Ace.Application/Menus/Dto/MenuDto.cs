@@ -20,8 +20,7 @@ namespace Ace.Menus.Dto
         [MaxLength(64)]
         public string Icon { get; set; }
 
-        [MaxLength(32)]
-        public string ModuleId { get; set; }
+        public int? ModuleId { get; set; }
 
         [MaxLength(128)]
         public string Url { get; set; }
