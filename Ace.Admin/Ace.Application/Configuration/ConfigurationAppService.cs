@@ -49,6 +49,9 @@ namespace Ace.Configuration
                 if (menuDto.PermissionName.IsNullOrEmpty())
                     menuDto.GrantedCount = menuDto.Children.Sum(p => p.GrantedCount);
                 else
+                    if (PermissionManager.GetPermissionOrNull(menuDto.PermissionName) == null)
+                    menuDto.GrantedCount = 0;
+                else
                     menuDto.GrantedCount = PermissionChecker.IsGranted(menuDto.PermissionName) ? 1 : 0;
             }
         }

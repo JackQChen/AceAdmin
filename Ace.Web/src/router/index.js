@@ -56,6 +56,12 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
+        path: 'module',
+        name: 'Module',
+        component: () => import('@/views/module/index'),
+        meta: { title: '模块管理' }
+      },
+      {
         path: 'auditlog',
         name: 'Auditlog',
         component: () => import('@/views/auditlog/index'),

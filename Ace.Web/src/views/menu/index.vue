@@ -13,7 +13,7 @@
           <el-tree
             v-loading="loading"
             :data="menuTree"
-            :props="defaultProps"
+            :props="menuProps"
             :expand-on-click-node="false"
             default-expand-all
             @node-click="handleNodeClick">
@@ -45,7 +45,7 @@
             <el-cascader
               ref="parentMenu"
               :options="menuTree"
-              :props="defaultProps"
+              :props="menuProps"
               :value="parentPath"
               placeholder="请选择上级菜单"
               clearable
@@ -64,14 +64,12 @@
           </el-form-item>
           <el-form-item label="模块">
             <el-cascader
-              :props="defaultProps"
+              :options="moduleTree"
+              :props="moduleProps"
+              :value="menu.moduleId"
               clearable
-              style="width:100%">
-              <template slot-scope="{ data }">
-                <svg-icon :icon-class="data.icon?data.icon:'menu'"/>
-                <span>{{ data.name }}</span>
-              </template>
-            </el-cascader>
+              style="width:100%"
+              @change="moduleChange"/>
           </el-form-item>
           <el-form-item label="排序">
             <el-input-number v-model="menu.order" :min="0" />
@@ -89,7 +87,7 @@
 </template>
 <script>
 import SplitPane from 'vue-splitpane'
-import { getMenuTree, createMenu, updateMenu, deleteMenu } from '@/api/menu'
+import { getMenuTree, getModuleTree, createMenu, updateMenu, deleteMenu } from '@/api/menu'
 
 export default {
   components: { SplitPane },
@@ -97,14 +95,21 @@ export default {
     return {
       loading: true,
       menuTree: [],
+      moduleTree: [],
       menu: {},
       parentPath: [],
-      defaultProps: {
+      menuProps: {
         children: 'children',
         value: 'id',
         label: 'name',
         expandTrigger: 'hover',
         checkStrictly: true
+      },
+      moduleProps: {
+        children: 'children',
+        value: 'id',
+        label: 'name',
+        expandTrigger: 'hover'
       }
     }
   },
@@ -113,9 +118,12 @@ export default {
   },
   methods: {
     fetchData() {
-      getMenuTree(this.listQuery).then(data => {
+      getMenuTree().then(data => {
         this.menuTree = this.removeEmptyNode(data)
         this.loading = false
+      })
+      getModuleTree().then(data => {
+        this.moduleTree = this.removeEmptyNode(data)
       })
     },
     removeEmptyNode(data) {
@@ -144,6 +152,9 @@ export default {
     parentChange(val) {
       this.menu.parentId = val[val.length - 1]
       this.$refs.parentMenu.toggleDropDownVisible()
+    },
+    moduleChange(val) {
+      this.menu.moduleId = val[val.length - 1]
     },
     addMenu() {
       const pId = this.menu.id

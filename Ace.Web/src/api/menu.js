@@ -8,6 +8,14 @@ export function getMenuTree(params) {
   })
 }
 
+export function getModuleTree(params) {
+  return request({
+    url: 'Module/GetModuleTree',
+    method: 'get',
+    params
+  })
+}
+
 export function createMenu(data) {
   return request({
     url: 'Menu/Create',

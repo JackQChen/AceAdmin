@@ -3,8 +3,7 @@
     <el-table
       v-loading="listLoading"
       :data="list"
-      :default-sort = "{prop: 'executionTime', order: 'descending'}"
-      :cell-style="{padding:'0px'}"
+      :default-sort = "{prop: 'id', order: 'ascending'}"
       :height="tableHeight"
       element-loading-text="加载中..."
       border
@@ -15,33 +14,20 @@
       <el-table-column prop="id" align="center" label="ID" sortable="custom" width="100">
         <template slot-scope="scope">{{ scope.row.id }}</template>
       </el-table-column>
-      <el-table-column prop="serviceName" label="ServiceName" width="300">
-        <template slot-scope="scope">{{ scope.row.serviceName }}</template>
+      <el-table-column prop="name" label="模块名称">
+        <template slot-scope="scope">{{ scope.row.name }}</template>
       </el-table-column>
-      <el-table-column prop="methodName" label="MethodName">
-        <template slot-scope="scope">{{ scope.row.methodName }}</template>
+      <el-table-column prop="parentId" label="父节点ID">
+        <template slot-scope="scope">{{ scope.row.parentId }}</template>
       </el-table-column>
-      <el-table-column prop="executionTime" label="ExecutionTime" sortable="custom" >
-        <template slot-scope="scope">{{ scope.row.executionTime }}</template>
+      <el-table-column prop="url" label="Url">
+        <template slot-scope="scope">{{ scope.row.url }}</template>
       </el-table-column>
-      <el-table-column prop="executionDuration" label="ExecutionDuration">
-        <template slot-scope="scope">{{ scope.row.executionDuration }}</template>
+      <el-table-column prop="permissionName" label="权限名称" >
+        <template slot-scope="scope">{{ scope.row.permissionName }}</template>
       </el-table-column>
-      <el-table-column prop="exception" label="Exception" align="center">
-        <template slot-scope="scope">
-          <el-popover trigger="hover" placement="top">
-            <div>{{ scope.row.exception }}</div>
-            <div slot="reference" class="name-wrapper">
-              <el-tag size="medium">{{ scope.row.exception }}</el-tag>
-            </div>
-          </el-popover>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" width="200">
-        <template slot-scope="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
-        </template>
+      <el-table-column prop="creationTime" label="创建时间" >
+        <template slot-scope="scope">{{ scope.row.creationTime }}</template>
       </el-table-column>
     </el-table>
     <el-pagination
@@ -57,19 +43,9 @@
 </template>
 
 <script>
-import { getList } from '@/api/auditlog'
+import { getList } from '@/api/module'
 
 export default {
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
   data() {
     return {
       list: null,
@@ -78,7 +54,7 @@ export default {
         pageNumber: 1,
         pageSize: 10,
         sort: [],
-        sorting: 'executionTime desc'
+        sorting: 'id asc'
       },
       totalCount: 0,
       tableHeight: window.innerHeight - 155
