@@ -36,6 +36,12 @@ namespace Ace.EntityFrameworkCore
                 .WithOne(e => e.Parent)
                 .HasForeignKey(e => e.ParentId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+            //module
+            modelBuilder.Entity<Module>()
+                .HasMany(e => e.Children)
+                .WithOne(e => e.Parent)
+                .HasForeignKey(e => e.ParentId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
             //user
             modelBuilder.Entity<User>()
                 .Property(p => p.EmailAddress)

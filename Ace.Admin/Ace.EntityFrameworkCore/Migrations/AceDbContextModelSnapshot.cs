@@ -1079,6 +1079,8 @@ namespace Ace.Migrations
                         .IsRequired()
                         .HasMaxLength(64);
 
+                    b.Property<int?>("ParentId");
+
                     b.Property<string>("PermissionName")
                         .IsRequired()
                         .HasMaxLength(128);
@@ -1090,6 +1092,8 @@ namespace Ace.Migrations
                         .HasMaxLength(128);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
 
                     b.ToTable("Sys_Modules");
                 });
@@ -1300,6 +1304,13 @@ namespace Ace.Migrations
                         .HasForeignKey("ModuleId");
 
                     b.HasOne("Ace.Menus.Menu", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+                });
+
+            modelBuilder.Entity("Ace.Modules.Module", b =>
+                {
+                    b.HasOne("Ace.Modules.Module", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId");
                 });

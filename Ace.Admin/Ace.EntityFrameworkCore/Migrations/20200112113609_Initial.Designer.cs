@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ace.Migrations
 {
     [DbContext(typeof(AceDbContext))]
-    [Migration("20191224151438_Initial")]
+    [Migration("20200112113609_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1081,6 +1081,8 @@ namespace Ace.Migrations
                         .IsRequired()
                         .HasMaxLength(64);
 
+                    b.Property<int?>("ParentId");
+
                     b.Property<string>("PermissionName")
                         .IsRequired()
                         .HasMaxLength(128);
@@ -1092,6 +1094,8 @@ namespace Ace.Migrations
                         .HasMaxLength(128);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
 
                     b.ToTable("Sys_Modules");
                 });
@@ -1302,6 +1306,13 @@ namespace Ace.Migrations
                         .HasForeignKey("ModuleId");
 
                     b.HasOne("Ace.Menus.Menu", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+                });
+
+            modelBuilder.Entity("Ace.Modules.Module", b =>
+                {
+                    b.HasOne("Ace.Modules.Module", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId");
                 });

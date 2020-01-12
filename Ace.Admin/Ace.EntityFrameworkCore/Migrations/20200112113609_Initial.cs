@@ -172,6 +172,7 @@ namespace Ace.Migrations
                     CreatorUserId = table.Column<long>(nullable: true),
                     LastModificationTime = table.Column<DateTime>(nullable: true),
                     LastModifierUserId = table.Column<long>(nullable: true),
+                    ParentId = table.Column<int>(nullable: true),
                     Name = table.Column<string>(maxLength: 64, nullable: false),
                     Url = table.Column<string>(maxLength: 128, nullable: false),
                     PermissionName = table.Column<string>(maxLength: 128, nullable: false),
@@ -181,6 +182,12 @@ namespace Ace.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sys_Modules", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sys_Modules_Sys_Modules_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "Sys_Modules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -882,6 +889,11 @@ namespace Ace.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Sys_Menus_ParentId",
                 table: "Sys_Menus",
+                column: "ParentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sys_Modules_ParentId",
+                table: "Sys_Modules",
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
