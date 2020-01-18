@@ -17,7 +17,7 @@ export function getInfo() {
 
 export function getMenuTree(pid) {
   return request({
-    url: 'Configuration/GetMenuTree',
+    url: 'Session/GetMenuTree',
     method: 'get',
     params: { parentId: pid }
   })
