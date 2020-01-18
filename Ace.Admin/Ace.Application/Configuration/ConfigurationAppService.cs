@@ -1,26 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Abp.Auditing;
 using Abp.Authorization;
-using Abp.Domain.Repositories;
-using Abp.Extensions;
 using Abp.Runtime.Session;
 using Ace.Configuration.Dto;
-using Ace.Menus;
-using Ace.Menus.Dto;
-using Microsoft.EntityFrameworkCore;
 
 namespace Ace.Configuration
 {
     [AbpAuthorize]
     public class ConfigurationAppService : AceAppServiceBase
     {
-        IRepository<Menu> _menuRepository;
-        public ConfigurationAppService(IRepository<Menu> menuRepository)
-        {
-            _menuRepository = menuRepository;
-        }
 
         public async Task ChangeUiTheme(ChangeUiThemeInput input)
         {
@@ -28,43 +22,84 @@ namespace Ace.Configuration
         }
 
         [DisableAuditing]
-        public async Task<List<MenuNodeDto>> GetMenuTree(int? parentId)
+        public object GetSystemInfo()
         {
-            var menuList = await _menuRepository.GetAllIncluding(p => p.Module).ToListAsync();
-            var menuDtoList = menuList
-                .Where(p => p.ParentId == parentId)
-                .OrderBy(k => k.Order)
-                .Select(s => ObjectMapper.Map<MenuDto>(s)).ToList();
-            SetGrantedCount(menuDtoList);
-            var nodeList = new List<MenuNodeDto>();
-            BuildMenuTree(menuDtoList, nodeList);
-            return nodeList;
+            //SystemInfo
+            var systemInfo = new
+            {
+                StartTime = Process.GetCurrentProcess().StartTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                OSArchitecture = RuntimeInformation.OSArchitecture.ToString(),
+                RuntimeInformation.FrameworkDescription,
+                OSDescription = RuntimeInformation.OSDescription.Split('+')[0],
+                Environment.ProcessorCount,
+                Environment.MachineName
+            };
+            var realTimeInfo = new Dictionary<string, string>();
+            //RealTimeInfo(Linux only)
+            try
+            {
+                //temperature
+                realTimeInfo.Add("Temperature", (Convert.ToDecimal(File.ReadAllText(@"/sys/class/thermal/thermal_zone0/temp")) / 1000).ToString());
+                //memoryInfo
+                var memoryInfo = File.ReadAllText(@"/proc/meminfo")
+                        .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => new
+                        {
+                            Key = s.Split(':')[0],
+                            Value = Convert.ToInt32(s.Split(':')[1].Trim().Split(' ')[0]) * 1024
+                        })
+                        .ToDictionary(k => k.Key, v => v.Value);
+                var memUsed = memoryInfo["MemTotal"] - memoryInfo["MemFree"] - memoryInfo["Buffers"] - memoryInfo["Cached"];
+                realTimeInfo.Add("MemUsed", FormatFileSize(memUsed));
+                realTimeInfo.Add("MemTotal", FormatFileSize(memoryInfo["MemTotal"]));
+                realTimeInfo.Add("MemUsage", decimal.Round(memUsed * 100m / memoryInfo["MemTotal"], 2).ToString());
+                //diskUsage
+                var df = ExecuteCommand("df /")
+                    .Split('点')[1].Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                    .Skip(1).Take(3)
+                    .Select(s => Convert.ToInt64(s) * 1024).ToArray();
+                realTimeInfo.Add("DiskUsed", FormatFileSize(df[0] - df[2]));
+                realTimeInfo.Add("DiskTotal", FormatFileSize(df[0]));
+                realTimeInfo.Add("DiskUsage", decimal.Round((df[0] - df[2]) * 100m / df[0], 2).ToString());
+            }
+            catch
+            {
+            }
+            return new
+            {
+                systemInfo,
+                realTimeInfo
+            };
         }
 
-        private void SetGrantedCount(List<MenuDto> menuDtoList)
+        private string FormatFileSize(long fileSize)
         {
-            foreach (var menuDto in menuDtoList)
-            {
-                SetGrantedCount(menuDto.Children);
-                if (menuDto.PermissionName.IsNullOrEmpty())
-                    menuDto.GrantedCount = menuDto.Children.Sum(p => p.GrantedCount);
-                else
-                    if (PermissionManager.GetPermissionOrNull(menuDto.PermissionName) == null)
-                    menuDto.GrantedCount = 0;
-                else
-                    menuDto.GrantedCount = PermissionChecker.IsGranted(menuDto.PermissionName) ? 1 : 0;
-            }
+            if (fileSize < 0)
+                return "ErrorSize";
+            else if (fileSize >= 1024 * 1024 * 1024)
+                return string.Format("{0:########0.00}GB", fileSize / (1024m * 1024 * 1024));
+            else if (fileSize >= 1024 * 1024)
+                return string.Format("{0:####0.00}MB", fileSize / (1024m * 1024));
+            else if (fileSize >= 1024)
+                return string.Format("{0:####0.00}KB", fileSize / 1024m);
+            else
+                return string.Format("{0}Bytes", fileSize);
         }
 
-        private void BuildMenuTree(List<MenuDto> menuDtoList, List<MenuNodeDto> nodeList)
+        private string ExecuteCommand(string command)
         {
-            foreach (var menuDto in menuDtoList.Where(p => p.IsActive && p.GrantedCount > 0).OrderBy(k => k.Order))
+            var strResult = "";
+            var strList = command.Split(' ');
+            var psi = new ProcessStartInfo(strList[0], string.Join(' ', strList.Skip(1))) { RedirectStandardOutput = true };
+            var proc = Process.Start(psi);
+            using (var sr = proc.StandardOutput)
             {
-                var node = ObjectMapper.Map<MenuNodeDto>(menuDto);
-                node.Children.Clear();
-                nodeList.Add(node);
-                BuildMenuTree(menuDto.Children, node.Children);
+                while (!sr.EndOfStream)
+                    strResult += sr.ReadLine();
+                if (!proc.HasExited)
+                    proc.Kill();
             }
+            return strResult;
         }
     }
 }
