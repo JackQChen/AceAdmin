@@ -40,7 +40,7 @@ namespace Ace.Configuration
             {
                 //temperature
                 realTimeInfo.Add("Temperature", (Convert.ToDecimal(File.ReadAllText(@"/sys/class/thermal/thermal_zone0/temp")) / 1000).ToString());
-                //memoryInfo
+                //memoryUsage
                 var memoryInfo = File.ReadAllText(@"/proc/meminfo")
                         .Split('\n', StringSplitOptions.RemoveEmptyEntries)
                         .Select(s => new
