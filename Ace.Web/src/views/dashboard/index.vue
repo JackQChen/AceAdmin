@@ -100,8 +100,9 @@ export default {
 }
 </script>
 <style scoped>
-.dashboard{
-  padding:0 20px
+.dashboard
+{
+  padding:0 20px 20px 20px;
 }
 .el-card
 {

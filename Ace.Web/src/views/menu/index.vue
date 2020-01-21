@@ -1,89 +1,91 @@
 <template>
-  <split-pane :min-percent="20" :default-percent="30" split="vertical">
-    <template slot="paneL">
-      <el-card class="box-card">
-        <div slot="header">
-          <span>菜单结构</span>
-          <el-button-group style="float:right;margin-top:-8px;">
-            <el-button type="primary" size="small" icon="el-icon-plus" @click="addMenu"/>
-            <el-button type="primary" size="small" icon="el-icon-delete" @click="removeMenu"/>
-          </el-button-group>
-        </div>
-        <div class="fill">
-          <el-tree
-            v-loading="loading"
-            :data="menuTree"
-            :props="menuProps"
-            :expand-on-click-node="false"
-            default-expand-all
-            @node-click="handleNodeClick">
-            <span slot-scope="{ data }" class="custom-tree-node">
-              <svg-icon :icon-class="data.icon?data.icon:'menu'" />
-              <span>{{ data.name }}</span>
-            </span>
-          </el-tree>
-        </div>
-      </el-card>
-    </template>
-    <template slot="paneR">
-      <el-card class="box-card">
-        <div slot="header">
-          <span>菜单信息</span>
-        </div>
-        <el-form
-          v-loading="loading"
-          :model="menu"
-          label-width="100px"
-          style="width:500px">
-          <el-form-item label="菜单ID">
-            <el-input v-model="menu.id" :disabled="true"/>
-          </el-form-item>
-          <el-form-item label="菜单名称">
-            <el-input v-model="menu.name"/>
-          </el-form-item>
-          <el-form-item label="上级菜单">
-            <el-cascader
-              ref="parentMenu"
-              :options="menuTree"
+  <div class="container">
+    <split-pane :min-percent="20" :default-percent="30" split="vertical">
+      <template slot="paneL">
+        <el-card class="box-card">
+          <div slot="header">
+            <span>菜单结构</span>
+            <el-button-group style="float:right;margin-top:-8px;">
+              <el-button type="primary" size="small" icon="el-icon-plus" @click="addMenu"/>
+              <el-button type="primary" size="small" icon="el-icon-delete" @click="removeMenu"/>
+            </el-button-group>
+          </div>
+          <div class="fill">
+            <el-tree
+              v-loading="loading"
+              :data="menuTree"
               :props="menuProps"
-              :value="parentPath"
-              placeholder="请选择上级菜单"
-              clearable
-              style="width:100%"
-              @change="parentChange">
-              <template slot-scope="{ data }">
+              :expand-on-click-node="false"
+              default-expand-all
+              @node-click="handleNodeClick">
+              <span slot-scope="{ data }" class="custom-tree-node">
                 <svg-icon :icon-class="data.icon?data.icon:'menu'" />
                 <span>{{ data.name }}</span>
-              </template>
-            </el-cascader>
-          </el-form-item>
-          <el-form-item label="图标">
-            <el-input v-model="menu.icon">
-              <template slot="prepend"><svg-icon :icon-class="menu.icon?menu.icon:'menu'" /></template>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="模块">
-            <el-cascader
-              :options="moduleTree"
-              :props="moduleProps"
-              :value="menu.moduleId"
-              clearable
-              style="width:100%"
-              @change="moduleChange"/>
-          </el-form-item>
-          <el-form-item label="排序">
-            <el-input-number v-model="menu.order" :min="0" />
-          </el-form-item>
-          <el-form-item label="启用">
-            <el-switch v-model="menu.isActive"/>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="save">保存</el-button>
-          </el-form-item>
-        </el-form>
-      </el-card>
-    </template>
-  </split-pane>
+              </span>
+            </el-tree>
+          </div>
+        </el-card>
+      </template>
+      <template slot="paneR">
+        <el-card class="box-card">
+          <div slot="header">
+            <span>菜单信息</span>
+          </div>
+          <el-form
+            v-loading="loading"
+            :model="menu"
+            label-width="100px"
+            style="width:500px">
+            <el-form-item label="菜单ID">
+              <el-input v-model="menu.id" :disabled="true"/>
+            </el-form-item>
+            <el-form-item label="菜单名称">
+              <el-input v-model="menu.name"/>
+            </el-form-item>
+            <el-form-item label="上级菜单">
+              <el-cascader
+                ref="parentMenu"
+                :options="menuTree"
+                :props="menuProps"
+                :value="parentPath"
+                placeholder="请选择上级菜单"
+                clearable
+                style="width:100%"
+                @change="parentChange">
+                <template slot-scope="{ data }">
+                  <svg-icon :icon-class="data.icon?data.icon:'menu'" />
+                  <span>{{ data.name }}</span>
+                </template>
+              </el-cascader>
+            </el-form-item>
+            <el-form-item label="图标">
+              <el-input v-model="menu.icon">
+                <template slot="prepend"><svg-icon :icon-class="menu.icon?menu.icon:'menu'" /></template>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="模块">
+              <el-cascader
+                :options="moduleTree"
+                :props="moduleProps"
+                :value="menu.moduleId"
+                clearable
+                style="width:100%"
+                @change="moduleChange"/>
+            </el-form-item>
+            <el-form-item label="排序">
+              <el-input-number v-model="menu.order" :min="0" />
+            </el-form-item>
+            <el-form-item label="启用">
+              <el-switch v-model="menu.isActive"/>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="save">保存</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </template>
+    </split-pane>
+  </div>
 </template>
 <script>
 import SplitPane from 'vue-splitpane'
@@ -232,6 +234,10 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
+.container
+{
+  height: calc(100vh - 84px);
+}
 .fill
 {
   margin: -20px;
