@@ -222,7 +222,7 @@ export default {
       display: inline-block;
       position: relative;
       cursor: pointer;
-      height: 26px;
+      height: 30px;
       line-height: 26px;
       border: 1px solid #d8dce5;
       color: #495060;
